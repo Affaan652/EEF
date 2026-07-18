@@ -72,7 +72,7 @@ export default async function PortalPage() {
           {data.fees.items.length === 0 ? (
             <p className="panel-empty">No fee items on record.</p>
           ) : (
-            data.fees.items.map((fee) => (
+            data.fees.items.map((fee: (typeof data.fees.items)[number]) => (
               <div className="panel-row" key={fee.id}>
                 <span className="panel-row-title">
                   {fee.feeStructure.name}
@@ -103,7 +103,7 @@ export default async function PortalPage() {
           {data.upcomingExams.length === 0 ? (
             <p className="panel-empty">No upcoming exams scheduled.</p>
           ) : (
-            data.upcomingExams.map((exam) => (
+            data.upcomingExams.map((exam: (typeof data.upcomingExams)[number]) => (
               <div className="panel-row" key={exam.id}>
                 <span className="panel-row-title">
                   {exam.title} — {exam.course.name}
@@ -124,7 +124,7 @@ export default async function PortalPage() {
           {data.attendance.recent.length === 0 ? (
             <p className="panel-empty">No attendance recorded yet.</p>
           ) : (
-            data.attendance.recent.map((a) => (
+            data.attendance.recent.map((a: (typeof data.attendance.recent)[number]) => (
               <div className="panel-row" key={a.id}>
                 <span className="panel-row-title">
                   {new Date(a.date).toLocaleDateString("en-GB", {
@@ -197,7 +197,7 @@ export default async function PortalPage() {
         {data.timetableByDay.every((d) => d.periods.length === 0) ? (
           <p className="panel-empty">No classes assigned yet.</p>
         ) : (
-          data.timetableByDay.map((d) =>
+          data.timetableByDay.map((d: (typeof data.timetableByDay)[number]) =>
             d.periods.length === 0 ? null : (
               <div key={d.day} style={{ marginBottom: 14 }}>
                 <div
@@ -206,7 +206,7 @@ export default async function PortalPage() {
                 >
                   {d.day}
                 </div>
-                {d.periods.map((p) => (
+                {d.periods.map((p: (typeof d.periods)[number]) => (
                   <div className="panel-row" key={p.id}>
                     <span className="panel-row-title">
                       {p.course.name} — {p.class.name}
