@@ -30,7 +30,7 @@ export async function getStudentPortalData(userId: string) {
           },
         },
       },
-      studentFees: {
+      feeStructures: {
         include: { feeStructure: { select: { name: true, dueDate: true } } },
         orderBy: { dueDate: "desc" },
       },
@@ -49,7 +49,7 @@ export async function getStudentPortalData(userId: string) {
     .filter((exam) => new Date(exam.scheduledAt) >= now)
     .slice(0, 5);
 
-  const totalDue = student.studentFees.reduce(
+  const totalDue = student.feeStructures.reduce(
     (sum, fee) => sum + fee.remainingAmount,
     0
   );
@@ -69,7 +69,7 @@ export async function getStudentPortalData(userId: string) {
     },
     fees: {
       totalDue,
-      items: student.studentFees,
+      items: student.feeStructures,
     },
     attendance: {
       last30DaysPercent: attendancePercent,
