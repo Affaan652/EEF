@@ -1,4 +1,6 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSession, isAdminRole } from "@/lib/auth";
+import { logoutAction } from "@/app/login/actions";
 
 const navGroups = [
   {
@@ -30,17 +32,26 @@ const navGroups = [
   },
 ];
 
-export default function DashboardLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Defense in depth: middleware already blocks this route, but a Server
+  // Component that reads sensitive data should never rely on middleware
+  // alone, since middleware can be bypassed by misconfiguration.
+  const session = await getSession();
+  if (!session || !isAdminRole(session.role)) {
+    redirect("/login");
+  }
+
   return (
     <div className="shell">
       <aside className="sidebar">
         <div className="sidebar-mark">
-          EEF <span>College</span>
+          EEF <span>Admin</span>
         </div>
+        <div className="sidebar-role">{session.role.replace("_", " ")}</div>
 
         {navGroups.map((group) => (
           <div key={group.label}>
@@ -49,9 +60,9 @@ export default function DashboardLayout({
               {group.items.map((item) =>
                 item.active ? (
                   <li key={item.name}>
-                    <Link href="/dashboard" className="nav-item active">
+                    <a href="/admin" className="nav-item active">
                       {item.name}
-                    </Link>
+                    </a>
                   </li>
                 ) : (
                   <li key={item.name} className="nav-item disabled">
@@ -63,6 +74,13 @@ export default function DashboardLayout({
             </ul>
           </div>
         ))}
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user">{session.email}</div>
+          <form action={logoutAction} className="logout-form">
+            <button type="submit">Sign out</button>
+          </form>
+        </div>
       </aside>
 
       <div className="main">{children}</div>

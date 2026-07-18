@@ -10,7 +10,7 @@ function formatCurrency(amount: number) {
   }).format(amount);
 }
 
-export default async function DashboardPage() {
+export default async function AdminDashboardPage() {
   const metrics = await getDashboardMetrics();
   const today = new Date().toLocaleDateString("en-GB", {
     day: "2-digit",
