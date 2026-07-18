@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { getSession } from "@/lib/auth";
-import { isAdminRole } from "@/lib/auth";
+import { getSession, isAdminRole, getAdminRoute } from "@/lib/auth";
 
 export default async function Home() {
   const session = await getSession();
   const signedInHref = session
     ? isAdminRole(session.role)
-      ? "/admin"
+      ? `/${getAdminRoute()}`
       : "/portal"
     : "/login";
   const signedInLabel = session ? "Go to my dashboard" : "Sign in";

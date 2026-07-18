@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession, isAdminRole } from "@/lib/auth";
+import { getSession, isAdminRole, getAdminRoute } from "@/lib/auth";
 import { logoutAction } from "@/app/login/actions";
 
 const navGroups = [
@@ -45,6 +45,8 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
+  const adminRoute = `/${getAdminRoute()}`;
+
   return (
     <div className="shell">
       <aside className="sidebar">
@@ -60,7 +62,7 @@ export default async function AdminLayout({
               {group.items.map((item) =>
                 item.active ? (
                   <li key={item.name}>
-                    <a href="/admin" className="nav-item active">
+                    <a href={adminRoute} className="nav-item active">
                       {item.name}
                     </a>
                   </li>

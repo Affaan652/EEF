@@ -8,6 +8,7 @@ import {
   clearSessionCookie,
   verifyPassword,
   isAdminRole,
+  getAdminRoute,
 } from "@/lib/auth";
 
 // Best-effort in-memory throttle. Serverless instances are short-lived and
@@ -92,7 +93,7 @@ export async function loginAction(
     next && next.startsWith("/")
       ? next
       : isAdminRole(user.role)
-      ? "/admin"
+      ? `/${getAdminRoute()}`
       : "/portal";
 
   redirect(destination);

@@ -117,3 +117,19 @@ export const ADMIN_ROLES: Role[] = [
 export function isAdminRole(role: Role): boolean {
   return ADMIN_ROLES.includes(role);
 }
+
+// ------------------------------------------------------------
+// Secret admin path
+//
+// The real folder is still app/admin, but the public URL for it is
+// whatever ADMIN_ROUTE_SECRET is set to in the environment. Middleware
+// blocks direct requests to the literal /admin path and only serves it
+// when the request comes in through this secret segment - so scanning
+// a site for "/admin" finds nothing. Set a private, hard-to-guess value
+// (e.g. a random slug) in your environment variables and do not publish
+// it anywhere public.
+// ------------------------------------------------------------
+
+export function getAdminRoute(): string {
+  return process.env.ADMIN_ROUTE_SECRET || "admin";
+}
