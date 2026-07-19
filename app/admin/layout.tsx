@@ -27,16 +27,12 @@ export default async function AdminLayout({
       label: "Records",
       items: [
         { name: "Students", href: `${base}/students` },
-        { name: "Staff", href: `${base}/staff` },
         { name: "Admissions", href: `${base}/admissions` },
       ],
     },
     {
       label: "Finance",
-      items: [
-        { name: "Fees", href: `${base}/fees` },
-        { name: "Payroll", href: `${base}/payroll` },
-      ],
+      items: [{ name: "Fees", href: `${base}/fees` }],
     },
     {
       label: "Academics",
@@ -45,6 +41,10 @@ export default async function AdminLayout({
         { name: "Exams", href: `${base}/exams` },
         { name: "Attendance", href: `${base}/attendance` },
       ],
+    },
+    {
+      label: "Account",
+      items: [{ name: "Settings", href: `${base}/settings` }],
     },
   ];
 

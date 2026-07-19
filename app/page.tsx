@@ -19,8 +19,8 @@ export default async function Home() {
             EEF College
           </div>
           <nav className="site-nav">
-            <a href="#services">Services</a>
-            <a href="#about">About</a>
+            <a href="#services">Programs</a>
+            <Link href="/apply">Apply now</Link>
             <Link href={signedInHref} className="btn-primary">
               {signedInLabel}
             </Link>
@@ -30,57 +30,59 @@ export default async function Home() {
 
       <section className="landing-hero">
         <div>
-          <div className="landing-eyebrow">Official Administration Portal</div>
+          <div className="landing-eyebrow">Technical & Vocational Institute</div>
           <h1 className="landing-title">
-            Admissions, fees, attendance, and academic records, managed in one
-            place.
+            Three-year diploma programs in engineering and technology.
           </h1>
           <p className="landing-lede">
-            EEF College runs its student information system through this
-            portal. Staff manage records here; students and staff sign in to
-            view their own attendance, fees, and results.
+            EEF College offers 3-year diploma programs in Information
+            Technology, Civil, Mechanical, and Electrical disciplines. This
+            portal is where the college runs admissions, fees, attendance,
+            and academic records.
           </p>
           <div className="landing-actions">
-            <Link href="/login" className="btn-primary">
+            <Link href="/apply" className="btn-primary">
+              Apply for admission
+            </Link>
+            <Link href="/login" className="btn-ghost">
               Sign in to your account
             </Link>
-            <span className="landing-note">
-              Accounts are issued by the registrar's office
-            </span>
           </div>
         </div>
 
         <div className="landing-panel" id="services">
-          <div className="landing-panel-title">Departments served</div>
+          <div className="landing-panel-title">Diploma programs (3 years)</div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">Admissions</div>
+              <div className="landing-service-name">
+                Diploma in Information Technology (DIT)
+              </div>
               <div className="landing-service-desc">
-                Applications, review, enrollment
+                Software, networking, and systems fundamentals
               </div>
             </div>
           </div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">Accounts</div>
+              <div className="landing-service-name">Civil Engineering</div>
               <div className="landing-service-desc">
-                Fee structures, payments, dues
+                Construction, surveying, structural design
               </div>
             </div>
           </div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">Academics</div>
+              <div className="landing-service-name">Mechanical Engineering</div>
               <div className="landing-service-desc">
-                Classes, exams, results, timetables
+                Manufacturing, machine design, thermodynamics
               </div>
             </div>
           </div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">Attendance</div>
+              <div className="landing-service-name">Electrical Engineering</div>
               <div className="landing-service-desc">
-                Daily records by class
+                Power systems, wiring, industrial electronics
               </div>
             </div>
           </div>
@@ -88,8 +90,9 @@ export default async function Home() {
       </section>
 
       <footer className="site-footer" id="about">
-        EEF College - Administration &amp; Student Portal. Access is
-        restricted to enrolled students, staff, and authorized administrators.
+        EEF College - a technical institute offering 3-year diplomas in DIT,
+        Civil, Mechanical, and Electrical Engineering. Portal access is
+        restricted to enrolled students and authorized administrators.
       </footer>
     </>
   );

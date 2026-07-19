@@ -46,6 +46,8 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 a {
@@ -71,9 +73,8 @@ a:hover {
 
 .ledger-rule {
   border: none;
-  border-top: 2px solid var(--navy);
-  border-bottom: 1px solid var(--border);
-  height: 4px;
+  border-top: 3px solid var(--navy);
+  height: 3px;
   margin: 0;
   background: transparent;
 }
@@ -663,7 +664,7 @@ a:hover {
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid var(--bg-muted);
+  border-bottom: 1px solid var(--border);
   font-size: 14px;
 }
 
@@ -740,7 +741,7 @@ a:hover {
 
 .data-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--bg-muted);
+  border-bottom: 1px solid var(--border);
   color: var(--text);
   vertical-align: top;
 }
@@ -768,6 +769,115 @@ a:hover {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-faint);
+}
+
+.table-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* ------------------------------------------------------------
+   Banners (success / error messages after an action)
+   ------------------------------------------------------------ */
+
+.banner {
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.banner code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.banner-good {
+  background: var(--good-soft);
+  border: 1px solid var(--good);
+  color: #0f5132;
+}
+
+.banner-bad {
+  background: var(--rust-soft);
+  border: 1px solid var(--rust);
+  color: var(--rust);
+}
+
+/* ------------------------------------------------------------
+   Admin forms (create/edit staff, students, settings)
+   ------------------------------------------------------------ */
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin: 10px 0 0;
+}
+
+.field-success {
+  background: var(--good-soft);
+  color: var(--good);
+  border: 1px solid var(--good);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-top: 16px;
+}
+
+.field-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 18px;
+  color: var(--text);
+}
+
+.field-checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: var(--rust);
+  border: 1px solid var(--rust);
+  border-radius: 3px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: var(--rust-soft);
+}
+
+.panel-danger {
+  border-color: var(--rust);
 }
 
 /* ------------------------------------------------------------
@@ -914,5 +1024,10 @@ a:hover {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 }

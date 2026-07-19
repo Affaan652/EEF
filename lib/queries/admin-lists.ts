@@ -15,14 +15,6 @@ export async function getStudentsList() {
   });
 }
 
-export async function getStaffList() {
-  return prisma.staff.findMany({
-    take: LIST_LIMIT,
-    orderBy: { createdAt: "desc" },
-    include: { department: { select: { name: true } } },
-  });
-}
-
 export async function getAdmissionsList() {
   return prisma.admissionApplication.findMany({
     take: LIST_LIMIT,
@@ -53,16 +45,6 @@ export async function getFeeStructuresList() {
     totalCollected: totalCollected._sum.amount ?? 0,
     totalOutstanding: totalOutstanding._sum.remainingAmount ?? 0,
   };
-}
-
-export async function getPayrollList() {
-  return prisma.payrollLog.findMany({
-    take: LIST_LIMIT,
-    orderBy: [{ year: "desc" }, { month: "desc" }],
-    include: {
-      staff: { select: { firstName: true, lastName: true, employeeCode: true } },
-    },
-  });
 }
 
 export async function getClassesList() {

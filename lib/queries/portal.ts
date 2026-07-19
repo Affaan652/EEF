@@ -78,39 +78,3 @@ export async function getStudentPortalData(userId: string) {
     upcomingExams,
   };
 }
-
-export async function getStaffPortalData(userId: string) {
-  const staff = await prisma.staff.findUnique({
-    where: { userId },
-    include: {
-      department: { select: { name: true } },
-      timetables: {
-        where: { isActive: true },
-        orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
-        include: {
-          course: { select: { name: true, code: true } },
-          class: { select: { name: true, section: true } },
-          classroom: { select: { name: true, building: true } },
-        },
-      },
-    },
-  });
-
-  if (!staff) return null;
-
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const timetableByDay = days.map((day, i) => ({
-    day,
-    periods: staff.timetables.filter((t) => t.dayOfWeek === i),
-  }));
-
-  return {
-    profile: {
-      name: `${staff.firstName} ${staff.lastName}`,
-      employeeCode: staff.employeeCode,
-      designation: staff.designation,
-      department: staff.department?.name ?? "Unassigned",
-    },
-    timetableByDay,
-  };
-}
