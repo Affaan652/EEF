@@ -1,36 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession, isAdminRole, getAdminRoute } from "@/lib/auth";
 import { logoutAction } from "@/app/login/actions";
-
-const navGroups = [
-  {
-    label: "Overview",
-    items: [{ name: "Dashboard", active: true }],
-  },
-  {
-    label: "Records",
-    items: [
-      { name: "Students", active: false },
-      { name: "Staff", active: false },
-      { name: "Admissions", active: false },
-    ],
-  },
-  {
-    label: "Finance",
-    items: [
-      { name: "Fees", active: false },
-      { name: "Payroll", active: false },
-    ],
-  },
-  {
-    label: "Academics",
-    items: [
-      { name: "Classes", active: false },
-      { name: "Exams", active: false },
-      { name: "Attendance", active: false },
-    ],
-  },
-];
+import AdminSidebar from "./_components/admin-sidebar";
 
 export default async function AdminLayout({
   children,
@@ -45,46 +16,46 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const adminRoute = `/${getAdminRoute()}`;
+  const base = `/${getAdminRoute()}`;
+
+  const navGroups = [
+    {
+      label: "Overview",
+      items: [{ name: "Dashboard", href: base }],
+    },
+    {
+      label: "Records",
+      items: [
+        { name: "Students", href: `${base}/students` },
+        { name: "Staff", href: `${base}/staff` },
+        { name: "Admissions", href: `${base}/admissions` },
+      ],
+    },
+    {
+      label: "Finance",
+      items: [
+        { name: "Fees", href: `${base}/fees` },
+        { name: "Payroll", href: `${base}/payroll` },
+      ],
+    },
+    {
+      label: "Academics",
+      items: [
+        { name: "Classes", href: `${base}/classes` },
+        { name: "Exams", href: `${base}/exams` },
+        { name: "Attendance", href: `${base}/attendance` },
+      ],
+    },
+  ];
 
   return (
     <div className="shell">
-      <aside className="sidebar">
-        <div className="sidebar-mark">
-          EEF <span>Admin</span>
-        </div>
-        <div className="sidebar-role">{session.role.replace("_", " ")}</div>
-
-        {navGroups.map((group) => (
-          <div key={group.label}>
-            <div className="nav-group-label">{group.label}</div>
-            <ul className="nav-list">
-              {group.items.map((item) =>
-                item.active ? (
-                  <li key={item.name}>
-                    <a href={adminRoute} className="nav-item active">
-                      {item.name}
-                    </a>
-                  </li>
-                ) : (
-                  <li key={item.name} className="nav-item disabled">
-                    {item.name}
-                    <span className="nav-tag">Soon</span>
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-        ))}
-
-        <div className="sidebar-footer">
-          <div className="sidebar-user">{session.email}</div>
-          <form action={logoutAction} className="logout-form">
-            <button type="submit">Sign out</button>
-          </form>
-        </div>
-      </aside>
-
+      <AdminSidebar
+        navGroups={navGroups}
+        roleLabel={session.role.replace("_", " ")}
+        email={session.email}
+        logoutAction={logoutAction}
+      />
       <div className="main">{children}</div>
     </div>
   );
