@@ -94,7 +94,7 @@ export async function loginAction(
       ? next
       : isAdminRole(user.role)
       ? `/${getAdminRoute()}`
-      : "/portal";
+      : "/";
 
   redirect(destination);
 }

@@ -38,10 +38,8 @@ export async function middleware(request: NextRequest) {
   const isSecretAdminPath =
     pathname === `/${ADMIN_ROUTE_SECRET}` ||
     pathname.startsWith(`/${ADMIN_ROUTE_SECRET}/`);
-  const isPortalPath =
-    pathname === "/portal" || pathname.startsWith("/portal/");
 
-  if (!isSecretAdminPath && !isPortalPath) {
+  if (!isSecretAdminPath) {
     return NextResponse.next();
   }
 
@@ -54,20 +52,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isSecretAdminPath) {
-    if (!ADMIN_ROLES.includes(session.role)) {
-      return NextResponse.redirect(new URL("/portal", request.url));
-    }
-    // Internally serve the real /admin route tree, while the browser's
-    // address bar keeps showing the secret path.
-    const rewrittenPath = pathname.replace(
-      new RegExp(`^/${ADMIN_ROUTE_SECRET}`),
-      "/admin"
-    );
-    return NextResponse.rewrite(new URL(rewrittenPath, request.url));
+  if (!ADMIN_ROLES.includes(session.role)) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return NextResponse.next();
+  // Internally serve the real /admin route tree, while the browser's
+  // address bar keeps showing the secret path.
+  const rewrittenPath = pathname.replace(
+    new RegExp(`^/${ADMIN_ROUTE_SECRET}`),
+    "/admin"
+  );
+  return NextResponse.rewrite(new URL(rewrittenPath, request.url));
 }
 
 export const config = {

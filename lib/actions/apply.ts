@@ -8,6 +8,7 @@
 // /admin/admissions once the application is reviewed and approved.
 
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
 
 export type ApplyState = {
   error?: string;
@@ -89,6 +90,23 @@ export async function submitApplicationAction(
       status: "SUBMITTED",
       submittedAt: new Date(),
     },
+  });
+
+  // Best-effort: the application is already saved at this point, so an
+  // email hiccup should never make the applicant think their submission
+  // failed. Failures are logged server-side but not surfaced to them.
+  await sendEmail({
+    to: email,
+    subject: `Application received - ${application.applicationNumber}`,
+    html: `
+      <p>Dear ${values.firstName},</p>
+      <p>Your admission application to EEF College has been received.</p>
+      <p><strong>Application number:</strong> ${application.applicationNumber}</p>
+      <p><strong>Program applied for:</strong> ${values.desiredProgram}</p>
+      <p>Save your application number - the registrar's office will contact
+      you by email or phone about the next steps.</p>
+      <p>EEF College Admissions Office</p>
+    `,
   });
 
   return { success: true, applicationNumber: application.applicationNumber };

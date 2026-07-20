@@ -24,9 +24,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EEF College - Administration & Student Portal",
+  title: "EEF College - Administration",
   description:
-    "Official administration console and student portal for EEF College.",
+    "Official administration console for EEF College.",
 };
 
 export default function RootLayout({

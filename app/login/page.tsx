@@ -27,7 +27,7 @@ function LoginForm() {
         <span className="auth-seal" />
         <div>
           <div className="auth-letterhead-title">EEF College</div>
-          <div className="auth-letterhead-sub">Administration &amp; Student Portal</div>
+          <div className="auth-letterhead-sub">Administration</div>
         </div>
       </div>
 

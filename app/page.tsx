@@ -1,15 +1,6 @@
 import Link from "next/link";
-import { getSession, isAdminRole, getAdminRoute } from "@/lib/auth";
 
-export default async function Home() {
-  const session = await getSession();
-  const signedInHref = session
-    ? isAdminRole(session.role)
-      ? `/${getAdminRoute()}`
-      : "/portal"
-    : "/login";
-  const signedInLabel = session ? "Go to my dashboard" : "Sign in";
-
+export default function Home() {
   return (
     <>
       <header className="site-header">
@@ -20,10 +11,6 @@ export default async function Home() {
           </div>
           <nav className="site-nav">
             <a href="#services">Programs</a>
-            <Link href="/apply">Apply now</Link>
-            <Link href={signedInHref} className="btn-primary">
-              {signedInLabel}
-            </Link>
           </nav>
         </div>
       </header>
@@ -37,15 +24,12 @@ export default async function Home() {
           <p className="landing-lede">
             EEF College offers 3-year diploma programs in Information
             Technology, Civil, Mechanical, and Electrical disciplines. This
-            portal is where the college runs admissions, fees, attendance,
+            site is where the college runs admissions, fees, attendance,
             and academic records.
           </p>
           <div className="landing-actions">
             <Link href="/apply" className="btn-primary">
               Apply for admission
-            </Link>
-            <Link href="/login" className="btn-ghost">
-              Sign in to your account
             </Link>
           </div>
         </div>
@@ -91,8 +75,8 @@ export default async function Home() {
 
       <footer className="site-footer" id="about">
         EEF College - a technical institute offering 3-year diplomas in DIT,
-        Civil, Mechanical, and Electrical Engineering. Portal access is
-        restricted to enrolled students and authorized administrators.
+        Civil, Mechanical, and Electrical Engineering. Sign-in access is
+        restricted to authorized administrators.
       </footer>
     </>
   );
