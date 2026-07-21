@@ -49,14 +49,26 @@ export default async function AdminLayout({
   ];
 
   return (
-    <div className="shell">
-      <AdminSidebar
-        navGroups={navGroups}
-        roleLabel={session.role.replace("_", " ")}
-        email={session.email}
-        logoutAction={logoutAction}
+    <>
+      <script
+        // Runs before React hydrates so the admin console never flashes
+        // the wrong theme. Sets an attribute on <body> (not <html>), and
+        // every dark-mode rule is scoped to `body[data-admin-theme="dark"]
+        // .shell` — so this can never leak into the public site or the
+        // login/apply pages, even across client-side navigation.
+        dangerouslySetInnerHTML={{
+          __html: `try{var t=localStorage.getItem("eef-admin-theme");document.body.setAttribute("data-admin-theme",t==="dark"?"dark":"light");}catch(e){}`,
+        }}
       />
-      <div className="main">{children}</div>
-    </div>
+      <div className="shell">
+        <AdminSidebar
+          navGroups={navGroups}
+          roleLabel={session.role.replace("_", " ")}
+          email={session.email}
+          logoutAction={logoutAction}
+        />
+        <div className="main">{children}</div>
+      </div>
+    </>
   );
 }

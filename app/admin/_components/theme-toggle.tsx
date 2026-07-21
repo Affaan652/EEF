@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
+const STORAGE_KEY = "eef-admin-theme";
+
+// Scoped to the admin console only: the attribute lives on <body>, and
+// every themed rule is written as `body[data-admin-theme="dark"] .shell`,
+// so this never affects the public site or auth pages even though they
+// share the same <html>/<body> across client-side navigation.
 function applyTheme(theme: Theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  window.localStorage.setItem("eef-theme", theme);
+  document.body.setAttribute("data-admin-theme", theme);
+  window.localStorage.setItem(STORAGE_KEY, theme);
 }
 
 export function ThemeToggle() {
@@ -14,7 +20,7 @@ export function ThemeToggle() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("eef-theme");
+    const stored = window.localStorage.getItem(STORAGE_KEY);
     setTheme(stored === "dark" ? "dark" : "light");
     setReady(true);
   }, []);
