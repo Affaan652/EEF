@@ -63,7 +63,6 @@ export default async function AdminLayout({
       <div className="shell">
         <AdminSidebar
           navGroups={navGroups}
-          roleLabel={session.role.replace("_", " ")}
           email={session.email}
           logoutAction={logoutAction}
         />

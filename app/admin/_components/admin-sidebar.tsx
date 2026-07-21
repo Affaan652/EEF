@@ -74,12 +74,10 @@ const ICONS: Record<string, JSX.Element> = {
 
 export default function AdminSidebar({
   navGroups,
-  roleLabel,
   email,
   logoutAction,
 }: {
   navGroups: NavGroup[];
-  roleLabel: string;
   email: string;
   logoutAction: () => void;
 }) {
@@ -91,10 +89,7 @@ export default function AdminSidebar({
     <aside className="sidebar">
       <div className="sidebar-top-row">
         <div>
-          <div className="sidebar-mark">
-            EEF <span>Admin</span>
-          </div>
-          <div className="sidebar-role">{roleLabel}</div>
+          <div className="sidebar-mark">EEF Founders</div>
         </div>
         <button
           type="button"

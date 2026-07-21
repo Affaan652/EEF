@@ -542,23 +542,9 @@ body[data-admin-theme="dark"] .shell {
   font-weight: 600;
   font-size: 17px;
   color: #ffffff;
-  margin-bottom: 6px;
+  margin-bottom: 26px;
   padding-left: 10px;
   letter-spacing: 0.01em;
-}
-
-.sidebar-mark span {
-  color: #d8b4fe;
-}
-
-.sidebar-role {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-  padding-left: 10px;
-  margin-bottom: 26px;
 }
 
 .nav-group-label {
@@ -718,7 +704,7 @@ body[data-admin-theme="dark"] .shell {
 
 .main .ledger-rule {
   margin-bottom: 32px;
-  border-top-color: var(--navy);
+  border-top-color: var(--text);
 }
 
 /* ------------------------------------------------------------
@@ -770,7 +756,7 @@ body[data-admin-theme="dark"] .shell {
   font-family: var(--font-mono);
   font-size: 30px;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--text);
   line-height: 1;
 }
 
@@ -869,6 +855,63 @@ body[data-admin-theme="dark"] .shell {
 .status-pill.neutral {
   background: var(--bg-muted);
   color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------
+   Bar chart (admin only) — pure CSS, no charting library
+   ------------------------------------------------------------ */
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bar-chart-row {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.bar-chart-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-chart-track {
+  background: var(--bg-muted);
+  border-radius: 6px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.bar-chart-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: var(--navy);
+  transition: width 0.3s ease;
+}
+
+.bar-chart-fill.good {
+  background: var(--good);
+}
+
+.bar-chart-fill.rust {
+  background: var(--rust);
+}
+
+.bar-chart-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  text-align: right;
+  min-width: 76px;
 }
 
 /* ------------------------------------------------------------
@@ -1134,8 +1177,7 @@ body[data-admin-theme="dark"] .shell {
     justify-content: space-between;
   }
 
-  .sidebar-mark,
-  .sidebar-role {
+  .sidebar-mark {
     margin-bottom: 0;
     padding-left: 0;
   }
@@ -1285,6 +1327,16 @@ body[data-admin-theme="dark"] .shell {
 
   .theme-toggle-option {
     flex: 1;
+  }
+
+  .bar-chart-row {
+    grid-template-columns: 90px 1fr auto;
+    gap: 8px;
+  }
+
+  .bar-chart-value {
+    min-width: 0;
+    font-size: 12px;
   }
 }
 

@@ -1,4 +1,7 @@
+import Link from "next/link";
 import { getFeeStructuresList } from "@/lib/queries/admin-lists";
+import { getAdminRoute } from "@/lib/auth";
+import { BarChart } from "@/app/admin/_components/bar-chart";
 
 export const dynamic = "force-dynamic";
 
@@ -10,9 +13,21 @@ function formatCurrency(amount: number) {
   }).format(amount);
 }
 
-export default async function FeesPage() {
+export default async function FeesPage({
+  searchParams,
+}: {
+  searchParams: { created?: string; updated?: string; deleted?: string; error?: string };
+}) {
   const { structures, totalCollected, totalOutstanding } =
     await getFeeStructuresList();
+  const base = `/${getAdminRoute()}`;
+
+  const structureBars = structures.slice(0, 8).map((f) => ({
+    label: f.name,
+    value: f.totalAmount,
+    displayValue: formatCurrency(f.totalAmount),
+    tone: "navy" as const,
+  }));
 
   return (
     <>
@@ -21,6 +36,19 @@ export default async function FeesPage() {
         <h1 className="main-title">Fees</h1>
       </div>
       <hr className="ledger-rule" />
+
+      {searchParams.created && (
+        <div className="banner banner-good">Fee structure added.</div>
+      )}
+      {searchParams.updated && (
+        <div className="banner banner-good">Fee structure updated.</div>
+      )}
+      {searchParams.deleted && (
+        <div className="banner banner-good">Fee structure deleted.</div>
+      )}
+      {searchParams.error && (
+        <div className="banner banner-bad">{searchParams.error}</div>
+      )}
 
       <div className="record-grid">
         <div className="record-card">
@@ -41,10 +69,41 @@ export default async function FeesPage() {
         </div>
       </div>
 
+      <div className="panel">
+        <h2 className="panel-title">Collected vs. outstanding</h2>
+        <BarChart
+          emptyLabel="No fee activity recorded yet."
+          data={[
+            {
+              label: "Collected",
+              value: totalCollected,
+              displayValue: formatCurrency(totalCollected),
+              tone: "good",
+            },
+            {
+              label: "Outstanding",
+              value: totalOutstanding,
+              displayValue: formatCurrency(totalOutstanding),
+              tone: "rust",
+            },
+          ]}
+        />
+      </div>
+
+      {structureBars.length > 0 && (
+        <div className="panel">
+          <h2 className="panel-title">Fee structures by total amount</h2>
+          <BarChart emptyLabel="No fee structures yet." data={structureBars} />
+        </div>
+      )}
+
       <div className="table-toolbar">
         <span className="table-count">
           {structures.length} fee structure(s)
         </span>
+        <Link href={`${base}/fees/new`} className="btn-primary btn-small">
+          Add fee structure
+        </Link>
       </div>
 
       <div className="table-wrap">
@@ -57,12 +116,13 @@ export default async function FeesPage() {
               <th>Due date</th>
               <th>Students assigned</th>
               <th>Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {structures.length === 0 ? (
               <tr>
-                <td colSpan={6} className="meta">
+                <td colSpan={7} className="meta">
                   No fee structures on record yet.
                 </td>
               </tr>
@@ -86,6 +146,11 @@ export default async function FeesPage() {
                     >
                       {f.isActive ? "Active" : "Inactive"}
                     </span>
+                  </td>
+                  <td>
+                    <Link href={`${base}/fees/${f.id}`} className="table-link">
+                      Edit
+                    </Link>
                   </td>
                 </tr>
               ))
