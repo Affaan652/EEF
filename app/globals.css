@@ -182,18 +182,14 @@ a:hover {
   font-weight: 600;
 }
 
-.site-brand-seal {
-  width: 32px;
-  height: 32px;
+.site-brand-logo {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--gold);
+  object-fit: cover;
   flex-shrink: 0;
+  background: #ffffff;
+  border: 2px solid var(--gold);
 }
 
 .site-nav {
@@ -269,6 +265,28 @@ a:hover {
 .landing-note {
   font-size: 13px;
   color: var(--text-faint);
+}
+
+.landing-hero-image {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  aspect-ratio: 4 / 3;
+}
+
+.landing-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.landing-panel-section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 32px 56px;
 }
 
 .landing-panel {
@@ -349,16 +367,9 @@ a:hover {
   height: 40px;
   border-radius: 50%;
   border: 2px solid var(--navy);
-  position: relative;
   flex-shrink: 0;
-}
-
-.auth-seal::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border: 1px solid var(--gold);
-  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
 }
 
 .auth-letterhead-title {
@@ -1230,6 +1241,15 @@ body[data-admin-theme="dark"] .shell {
     padding-right: 20px;
     padding-top: 48px;
   }
+
+  .landing-hero-image {
+    aspect-ratio: 16 / 9;
+  }
+
+  .landing-panel-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1291,6 +1311,11 @@ body[data-admin-theme="dark"] .shell {
 
   .landing-actions .btn-primary {
     width: 100%;
+  }
+
+  .landing-panel-section {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .auth-page {

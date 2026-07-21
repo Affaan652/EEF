@@ -1,4 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
+import logo from "@/public/logo.png";
+import campusHero from "@/public/campus-hero.jpg";
 
 export default function Home() {
   return (
@@ -6,7 +9,14 @@ export default function Home() {
       <header className="site-header">
         <div className="site-header-inner">
           <div className="site-brand">
-            <span className="site-brand-seal">EEF</span>
+            <Image
+              src={logo}
+              alt="EEF Polytechnic Institute Haripur logo"
+              className="site-brand-logo"
+              width={40}
+              height={40}
+              priority
+            />
             EEF College
           </div>
           <nav className="site-nav">
@@ -34,7 +44,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="landing-panel" id="services">
+        <div className="landing-hero-image">
+          <Image
+            src={campusHero}
+            alt="EEF College campus building"
+            priority
+            sizes="(max-width: 860px) 100vw, 480px"
+          />
+        </div>
+      </section>
+
+      <section className="landing-panel-section" id="services">
+        <div className="landing-panel">
           <div className="landing-panel-title">Diploma programs (3 years)</div>
           <div className="landing-service">
             <div>

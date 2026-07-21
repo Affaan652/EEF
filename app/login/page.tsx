@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import logo from "@/public/logo.png";
 import { LoginForm } from "./_components/login-form";
 
 // Keeps this page out of search engine indexes. It is never linked from
@@ -18,7 +20,7 @@ export default function LoginPage({
   return (
     <div className="auth-page">
       <div className="auth-letterhead">
-        <span className="auth-seal" />
+        <Image src={logo} alt="EEF College logo" className="auth-seal" width={40} height={40} priority />
         <div>
           <div className="auth-letterhead-title">EEF College</div>
           <div className="auth-letterhead-sub">Administration sign in</div>

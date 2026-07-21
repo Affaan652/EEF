@@ -2,6 +2,8 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
+import Image from "next/image";
+import logo from "@/public/logo.png";
 import { submitApplicationAction, type ApplyState } from "@/lib/actions/apply";
 
 const initialState: ApplyState = {};
@@ -29,7 +31,7 @@ export default function ApplyPage() {
     return (
       <div className="auth-page">
         <div className="auth-letterhead">
-          <span className="auth-seal" />
+          <Image src={logo} alt="EEF College logo" className="auth-seal" width={40} height={40} priority />
           <div>
             <div className="auth-letterhead-title">EEF College</div>
             <div className="auth-letterhead-sub">Admission Application</div>
@@ -56,7 +58,7 @@ export default function ApplyPage() {
   return (
     <div className="auth-page">
       <div className="auth-letterhead">
-        <span className="auth-seal" />
+        <Image src={logo} alt="EEF College logo" className="auth-seal" width={40} height={40} priority />
         <div>
           <div className="auth-letterhead-title">EEF College</div>
           <div className="auth-letterhead-sub">Admission Application</div>
