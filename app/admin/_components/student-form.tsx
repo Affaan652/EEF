@@ -9,7 +9,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <button type="submit" className="btn-primary" disabled={pending}>
-      {pending ? "Saving..." : "Create student account"}
+      {pending ? "Saving..." : "Add student"}
     </button>
   );
 }
@@ -45,15 +45,14 @@ export function StudentCreateForm({
       </div>
 
       <label className="field-label" htmlFor="email">
-        Email address
+        Email address (optional)
       </label>
       <input
         id="email"
         name="email"
         type="email"
-        required
         className="field-input"
-        placeholder="name@students.eefcollege.edu.pk"
+        placeholder="name@example.com"
       />
 
       <div className="form-grid">
@@ -110,8 +109,8 @@ export function StudentCreateForm({
       </div>
 
       <p className="field-hint">
-        A temporary password is generated automatically and shown once after
-        creation. Share it with the student directly.
+        This adds a student record for internal use (classes, attendance,
+        exams, fees). It does not create a login of any kind.
       </p>
 
       <SubmitButton />

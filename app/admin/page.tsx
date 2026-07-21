@@ -29,17 +29,11 @@ export default async function AdminDashboardPage() {
       <div className="record-grid">
         <div className="record-card">
           <span className="record-code">STU-01</span>
-          <div className="record-label">Active students</div>
+          <div className="record-label">Total students</div>
           <div className="record-value">{metrics.students.total}</div>
           <div className="record-sub">
             {metrics.students.newThisMonth} enrolled this month
           </div>
-        </div>
-
-        <div className="record-card">
-          <span className="record-code">STF-01</span>
-          <div className="record-label">Active staff</div>
-          <div className="record-value">{metrics.staff.total}</div>
         </div>
 
         <div className="record-card">
@@ -97,47 +91,6 @@ export default async function AdminDashboardPage() {
               </span>
               <span className="panel-row-meta">
                 {new Date(exam.scheduledAt).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                })}
-              </span>
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="panel">
-        <h2 className="panel-title">Pinned announcements</h2>
-        {metrics.announcements.length === 0 ? (
-          <p className="panel-empty">No pinned announcements right now.</p>
-        ) : (
-          metrics.announcements.map((a) => (
-            <div className="panel-row" key={a.id}>
-              <span className="panel-row-title">{a.title}</span>
-              <span className="panel-row-meta">
-                {new Date(a.createdAt).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                })}
-              </span>
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="panel">
-        <h2 className="panel-title">Recent activity</h2>
-        {metrics.recentActivities.length === 0 ? (
-          <p className="panel-empty">No activity logged yet.</p>
-        ) : (
-          metrics.recentActivities.map((log) => (
-            <div className="panel-row" key={log.id}>
-              <span className="panel-row-title">
-                {log.action}
-                {log.entity ? ` — ${log.entity}` : ""}
-              </span>
-              <span className="panel-row-meta">
-                {new Date(log.createdAt).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
                 })}

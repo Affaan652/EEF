@@ -13,7 +13,7 @@ export default async function AdminLayout({
   // alone, since middleware can be bypassed by misconfiguration.
   const session = await getSession();
   if (!session || !isAdminRole(session.role)) {
-    redirect("/login");
+    redirect(`/${getAdminRoute()}`);
   }
 
   const base = `/${getAdminRoute()}`;

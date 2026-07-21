@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function StudentsPage({
   searchParams,
 }: {
-  searchParams: { created?: string; email?: string; temp?: string; deleted?: string; error?: string };
+  searchParams: { created?: string; deleted?: string; error?: string };
 }) {
   const students = await getStudentsList();
   const base = `/${getAdminRoute()}`;
@@ -21,14 +21,10 @@ export default async function StudentsPage({
       <hr className="ledger-rule" />
 
       {searchParams.created && (
-        <div className="banner banner-good">
-          Account created for <strong>{searchParams.email}</strong>. Temporary
-          password: <code>{searchParams.temp}</code> — share this with them
-          directly and ask them to change it after signing in.
-        </div>
+        <div className="banner banner-good">Student record added.</div>
       )}
       {searchParams.deleted && (
-        <div className="banner banner-good">Student account deleted.</div>
+        <div className="banner banner-good">Student record deleted.</div>
       )}
       {searchParams.error && (
         <div className="banner banner-bad">{searchParams.error}</div>
@@ -49,14 +45,13 @@ export default async function StudentsPage({
               <th>Name</th>
               <th>Department</th>
               <th>Admitted</th>
-              <th>Status</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {students.length === 0 ? (
               <tr>
-                <td colSpan={6} className="meta">
+                <td colSpan={5} className="meta">
                   No students on record yet.
                 </td>
               </tr>
@@ -74,13 +69,6 @@ export default async function StudentsPage({
                       month: "short",
                       year: "numeric",
                     })}
-                  </td>
-                  <td>
-                    <span
-                      className={`status-pill ${s.isActive ? "good" : "neutral"}`}
-                    >
-                      {s.isActive ? "Active" : "Inactive"}
-                    </span>
                   </td>
                   <td>
                     <Link href={`${base}/students/${s.id}`} className="table-link">

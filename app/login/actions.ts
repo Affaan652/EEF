@@ -3,68 +3,55 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import {
+  verifyPassword,
   createSessionToken,
   setSessionCookie,
   clearSessionCookie,
-  verifyPassword,
   isAdminRole,
   getAdminRoute,
 } from "@/lib/auth";
-
-// Best-effort in-memory throttle. Serverless instances are short-lived and
-// this map is per-instance, so it is a speed bump against casual brute
-// forcing, not a substitute for a real rate limiter (e.g. Upstash, a WAF
-// rule, or Vercel Firewall) in front of this route for production use.
-const attempts = new Map<string, { count: number; resetAt: number }>();
-const MAX_ATTEMPTS = 8;
-const WINDOW_MS = 10 * 60 * 1000;
-
-function isThrottled(key: string): boolean {
-  const entry = attempts.get(key);
-  const now = Date.now();
-  if (!entry || entry.resetAt < now) {
-    attempts.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > MAX_ATTEMPTS;
-}
 
 export type LoginState = {
   error?: string;
 };
 
+const GENERIC_ERROR = "Invalid email or password.";
+
+// Only redirects within this site are ever honoured, and only into the
+// secret admin path - this avoids the login form being used as an open
+// redirect to an external site.
+function safeNextPath(next: string | null): string {
+  const base = `/${getAdminRoute()}`;
+  if (!next) return base;
+  const isInternal = next.startsWith("/") && !next.startsWith("//");
+  const isAdminPath = next === base || next.startsWith(`${base}/`);
+  return isInternal && isAdminPath ? next : base;
+}
+
 export async function loginAction(
   _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
-  const email = String(formData.get("email") ?? "")
-    .trim()
-    .toLowerCase();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
-  const next = String(formData.get("next") ?? "");
+  const next = String(formData.get("next") ?? "") || null;
 
   if (!email || !password) {
-    return { error: "Enter your email and password." };
-  }
-
-  if (isThrottled(email)) {
-    return { error: "Too many attempts. Try again in a few minutes." };
+    return { error: GENERIC_ERROR };
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
 
-  // Same generic message whether the email is unknown or the password is
-  // wrong, so a caller cannot use this form to discover which accounts exist.
-  const genericError = "Invalid email or password.";
-
-  if (!user || !user.isActive) {
-    return { error: genericError };
+  // Same generic error whether the email doesn't exist, the password is
+  // wrong, the account is disabled, or the role isn't an admin role - so
+  // none of those cases can be distinguished from the outside.
+  if (!user || !user.isActive || !isAdminRole(user.role)) {
+    return { error: GENERIC_ERROR };
   }
 
   const validPassword = await verifyPassword(password, user.passwordHash);
   if (!validPassword) {
-    return { error: genericError };
+    return { error: GENERIC_ERROR };
   }
 
   const token = await createSessionToken({
@@ -74,32 +61,15 @@ export async function loginAction(
   });
   await setSessionCookie(token);
 
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
-    }),
-    prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        action: "LOGIN",
-        entity: "User",
-        entityId: user.id,
-      },
-    }),
-  ]);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() },
+  });
 
-  const destination =
-    next && next.startsWith("/")
-      ? next
-      : isAdminRole(user.role)
-      ? `/${getAdminRoute()}`
-      : "/";
-
-  redirect(destination);
+  redirect(safeNextPath(next));
 }
 
 export async function logoutAction() {
   await clearSessionCookie();
-  redirect("/login");
+  redirect(`/${getAdminRoute()}`);
 }

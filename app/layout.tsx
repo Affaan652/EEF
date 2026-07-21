@@ -46,7 +46,17 @@ export default function RootLayout({
         } as React.CSSProperties
       }
     >
-      <body>{children}</body>
+      <body>
+        <script
+          // Runs before React hydrates so the page never flashes the
+          // wrong theme. Reads a plain localStorage value only - no
+          // tracking, no external calls.
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("eef-theme");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");}}catch(e){}`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -25,8 +25,20 @@ async function readSession(token: string | undefined) {
   }
 }
 
+function withNoIndex(response: NextResponse): NextResponse {
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // /login is not a real public page. It only exists as an internal
+  // rewrite target below - anyone hitting it directly (typed URL,
+  // scanner, bookmark) gets a plain 404, same as /admin.
+  if (pathname === "/login" || pathname.startsWith("/login/")) {
+    return new NextResponse("Not found", { status: 404 });
+  }
 
   // The real /admin folder is never reachable directly. Anyone hitting it
   // literally (including scanners guessing common admin paths) gets a
@@ -47,9 +59,12 @@ export async function middleware(request: NextRequest) {
   const session = await readSession(token);
 
   if (!session) {
+    // No separate URL, no redirect - the sign-in form is served in
+    // place, so the address bar keeps showing the private admin path
+    // and never reveals a generic /login page exists.
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
+    return withNoIndex(NextResponse.rewrite(loginUrl));
   }
 
   if (!ADMIN_ROLES.includes(session.role)) {
@@ -62,7 +77,7 @@ export async function middleware(request: NextRequest) {
     new RegExp(`^/${ADMIN_ROUTE_SECRET}`),
     "/admin"
   );
-  return NextResponse.rewrite(new URL(rewrittenPath, request.url));
+  return withNoIndex(NextResponse.rewrite(new URL(rewrittenPath, request.url)));
 }
 
 export const config = {

@@ -34,6 +34,31 @@
      app/layout.tsx so they resolve to the next/font-optimized faces. */
 }
 
+[data-theme="dark"] {
+  --bg: #10161d;
+  --bg-subtle: #161d26;
+  --bg-muted: #1c2530;
+  --surface: #161d26;
+  --border: #2a3542;
+  --border-strong: #3a4756;
+
+  --text: #e7ebf0;
+  --text-muted: #a7b1bd;
+  --text-faint: #7c8794;
+
+  --navy: #4d8fc7;
+  --navy-dark: #0b3558;
+  --navy-soft: rgba(77, 143, 199, 0.12);
+
+  --gold: #d8ac52;
+  --gold-soft: rgba(216, 172, 82, 0.14);
+
+  --good: #3fae7d;
+  --good-soft: rgba(63, 174, 125, 0.12);
+  --rust: #e5776d;
+  --rust-soft: rgba(229, 119, 109, 0.12);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -387,7 +412,7 @@ a:hover {
   font-size: 14px;
   font-family: var(--font-body);
   color: var(--text);
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .field-input:focus {
@@ -862,7 +887,7 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
+  background: var(--surface);
   color: var(--rust);
   border: 1px solid var(--rust);
   border-radius: 3px;
@@ -1030,4 +1055,50 @@ a:hover {
     grid-template-columns: 1fr;
     gap: 0;
   }
+}
+
+/* ------------------------------------------------------------
+   Theme toggle (Settings page)
+   ------------------------------------------------------------ */
+
+.theme-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.theme-toggle-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 340px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.theme-toggle-option {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: none;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.theme-toggle-option + .theme-toggle-option {
+  border-left: 1px solid var(--border-strong);
+}
+
+.theme-toggle-option[aria-pressed="true"] {
+  background: var(--navy);
+  color: #ffffff;
 }

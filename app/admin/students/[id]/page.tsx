@@ -12,7 +12,6 @@ export default async function ManageStudentPage({
   const student = await prisma.student.findUnique({
     where: { id: params.id },
     include: {
-      user: { select: { email: true } },
       department: { select: { name: true } },
     },
   });
@@ -39,7 +38,7 @@ export default async function ManageStudentPage({
         </div>
         <div className="panel-row">
           <span className="panel-row-title">Email</span>
-          <span className="panel-row-meta">{student.user.email}</span>
+          <span className="panel-row-meta">{student.email ?? "Not provided"}</span>
         </div>
         <div className="panel-row">
           <span className="panel-row-title">Department</span>
@@ -48,26 +47,28 @@ export default async function ManageStudentPage({
           </span>
         </div>
         <div className="panel-row">
-          <span className="panel-row-title">Status</span>
-          <span
-            className={`status-pill ${student.isActive ? "good" : "neutral"}`}
-          >
-            {student.isActive ? "Active" : "Inactive"}
+          <span className="panel-row-title">Admitted</span>
+          <span className="panel-row-meta">
+            {new Date(student.admissionDate).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
           </span>
         </div>
       </div>
 
       <div className="panel panel-danger" style={{ maxWidth: 560 }}>
-        <h2 className="panel-title">Delete account</h2>
+        <h2 className="panel-title">Delete record</h2>
         <p className="field-hint">
-          This removes the student record and its login. If the student has
-          linked fees, marks, or attendance, deletion is blocked until those
-          are cleared. This cannot be undone.
+          This removes the student record. If the student has linked fees or
+          attendance, deletion is blocked until those are cleared. This
+          cannot be undone.
         </p>
         <form action={deleteStudentAction}>
           <input type="hidden" name="studentId" value={student.id} />
           <button type="submit" className="btn-danger">
-            Delete student account
+            Delete student record
           </button>
         </form>
       </div>
