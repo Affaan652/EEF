@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getAdminRoute } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +24,7 @@ export default async function AdmissionDetailPage({
           fileName: true,
           mimeType: true,
           fileSize: true,
+          url: true,
         },
         orderBy: { createdAt: "asc" },
       },
@@ -34,8 +34,6 @@ export default async function AdmissionDetailPage({
   if (!application) {
     notFound();
   }
-
-  const base = `/${getAdminRoute()}`;
 
   return (
     <>
@@ -118,7 +116,7 @@ export default async function AdmissionDetailPage({
                 </div>
               </div>
               <a
-                href={`${base}/admissions/${application.id}/documents/${doc.id}`}
+                href={doc.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="table-link"

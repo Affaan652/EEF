@@ -9,6 +9,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { uploadDocumentToCloudinary } from "@/lib/cloudinary";
 
 export type ApplyState = {
   error?: string;
@@ -36,8 +37,8 @@ const REQUIRED_FIELDS = [
 ] as const;
 
 // Each of these must be an uploaded file (scan or clear photo), matching
-// the physical documents the admissions office asks for. The bytes are
-// stored directly in Neon (Postgres) - no external file-storage service.
+// the physical documents the admissions office asks for. Files are
+// uploaded to Cloudinary; only the resulting URL is saved in Neon.
 const REQUIRED_DOCUMENT_FIELDS = [
   { field: "dmcFile", label: "SSC (Matric) DMC" },
   { field: "bformFile", label: "Student's B-Form" },
@@ -54,14 +55,15 @@ type PendingDocument = {
   fileName: string;
   mimeType: string;
   fileSize: number;
-  data: Buffer;
+  url: string;
+  publicId: string;
 };
 
 async function readDocument(
   formData: FormData,
   field: string,
   label: string
-): Promise<{ doc?: PendingDocument; error?: string }> {
+): Promise<{ docs?: PendingDocument[]; error?: string; skipped?: boolean }> {
   const file = formData.get(field);
 
   if (!(file instanceof File) || file.size === 0) {
@@ -75,16 +77,43 @@ async function readDocument(
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
+  const uploaded = await uploadDocumentToCloudinary(
+    bytes,
+    file.type,
+    file.name,
+    "admissions"
+  );
 
-  return {
-    doc: {
-      label,
-      fileName: file.name,
-      mimeType: file.type,
-      fileSize: file.size,
-      data: bytes,
-    },
-  };
+  if (!uploaded) {
+    // Cloudinary isn't configured in this environment - don't block the
+    // applicant, just skip storing a reference for this document.
+    return { skipped: true };
+  }
+
+  const isConvertedPdf =
+    uploaded.storedMimeType === "image/jpeg" && file.type === "application/pdf";
+  const baseName = isConvertedPdf
+    ? file.name.replace(/\.pdf$/i, "")
+    : file.name;
+  const multiPage = uploaded.pages.length > 1;
+
+  const docs: PendingDocument[] = uploaded.pages.map((page) => ({
+    label: multiPage ? `${label} (page ${page.pageNumber} of ${page.totalPages})` : label,
+    fileName: isConvertedPdf
+      ? `${baseName}${multiPage ? `-p${page.pageNumber}` : ""}.jpg`
+      : baseName,
+    mimeType: uploaded.storedMimeType,
+    fileSize: page.bytes,
+    url: page.url,
+    // All pages of one PDF share the same underlying Cloudinary asset;
+    // the "#pN" suffix here is just so each row's publicId is unique in
+    // the admin view - it isn't a real, separately-destroyable Cloudinary ID.
+    publicId: multiPage
+      ? `${uploaded.publicId}#p${page.pageNumber}`
+      : uploaded.publicId,
+  }));
+
+  return { docs };
 }
 
 export async function submitApplicationAction(
@@ -137,8 +166,8 @@ export async function submitApplicationAction(
     if (result.error) {
       return { error: result.error };
     }
-    if (result.doc) {
-      documents.push(result.doc);
+    if (result.docs) {
+      documents.push(...result.docs);
     }
   }
 
@@ -173,7 +202,8 @@ export async function submitApplicationAction(
           fileName: doc.fileName,
           mimeType: doc.mimeType,
           fileSize: doc.fileSize,
-          data: doc.data,
+          url: doc.url,
+          publicId: doc.publicId,
         })),
       },
     },
