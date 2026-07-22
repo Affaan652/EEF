@@ -35,12 +35,57 @@ const REQUIRED_FIELDS = [
   "previousGrade",
 ] as const;
 
-const REQUIRED_DOCUMENTS = [
-  "SSC (Matric) DMC — 4 photocopies",
-  "Student's B-Form",
-  "Father's CNIC",
-  "6 passport-size photographs",
+// Each of these must be an uploaded file (scan or clear photo), matching
+// the physical documents the admissions office asks for. The bytes are
+// stored directly in Neon (Postgres) - no external file-storage service.
+const REQUIRED_DOCUMENT_FIELDS = [
+  { field: "dmcFile", label: "SSC (Matric) DMC" },
+  { field: "bformFile", label: "Student's B-Form" },
+  { field: "cnicFile", label: "Father's CNIC" },
+  { field: "photoFile", label: "Passport-size photograph" },
 ] as const;
+
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB per document (keeps each
+// request comfortably under typical serverless request-body limits)
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+
+type PendingDocument = {
+  label: string;
+  fileName: string;
+  mimeType: string;
+  fileSize: number;
+  data: Buffer;
+};
+
+async function readDocument(
+  formData: FormData,
+  field: string,
+  label: string
+): Promise<{ doc?: PendingDocument; error?: string }> {
+  const file = formData.get(field);
+
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: `Please upload your ${label}.` };
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return { error: `${label}: file is too large. Maximum size is 4MB.` };
+  }
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return { error: `${label}: upload a JPG, PNG, or PDF file.` };
+  }
+
+  const bytes = Buffer.from(await file.arrayBuffer());
+
+  return {
+    doc: {
+      label,
+      fileName: file.name,
+      mimeType: file.type,
+      fileSize: file.size,
+      data: bytes,
+    },
+  };
+}
 
 export async function submitApplicationAction(
   _prevState: ApplyState,
@@ -67,14 +112,6 @@ export async function submitApplicationAction(
     };
   }
 
-  const confirmedDocuments = formData.getAll("documents").map(String);
-  if (confirmedDocuments.length < REQUIRED_DOCUMENTS.length) {
-    return {
-      error:
-        "Please confirm you have all four required documents ready before submitting.",
-    };
-  }
-
   const email = values.email.toLowerCase();
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(email)) {
@@ -88,6 +125,20 @@ export async function submitApplicationAction(
     });
     if (existingCnic) {
       return { error: "An application with this CNIC already exists." };
+    }
+  }
+
+  // Read and validate each required document. Stop at the first failure
+  // rather than partially processing - the applicant fixes one file and
+  // resubmits.
+  const documents: PendingDocument[] = [];
+  for (const { field, label } of REQUIRED_DOCUMENT_FIELDS) {
+    const result = await readDocument(formData, field, label);
+    if (result.error) {
+      return { error: result.error };
+    }
+    if (result.doc) {
+      documents.push(result.doc);
     }
   }
 
@@ -114,9 +165,17 @@ export async function submitApplicationAction(
       desiredProgram: values.desiredProgram,
       previousSchool: values.previousSchool,
       previousMarks: previousMarks,
-      documents: confirmedDocuments,
       status: "SUBMITTED",
       submittedAt: new Date(),
+      uploadedDocuments: {
+        create: documents.map((doc) => ({
+          label: doc.label,
+          fileName: doc.fileName,
+          mimeType: doc.mimeType,
+          fileSize: doc.fileSize,
+          data: doc.data,
+        })),
+      },
     },
   });
 

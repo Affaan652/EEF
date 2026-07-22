@@ -212,8 +212,10 @@ model AdmissionApplication {
   previousGrade  String?
   previousMarks  Float?
 
-  // Documents (stored as JSON array of { name, url, verified })
-  documents Json @default("[]")
+  // Documents - actual file bytes stored directly in Neon (Postgres),
+  // no external file-storage service. Fine at this scale (~900
+  // students, 4 files each, a few MB each = single-digit GB total).
+  uploadedDocuments ApplicationDocument[]
 
   // Review
   reviewedBy    String?
@@ -232,6 +234,26 @@ model AdmissionApplication {
   @@index([email])
   @@index([applicationNumber])
   @@map("admission_applications")
+}
+
+// Stores the actual bytes of each uploaded admission document (DMC,
+// B-Form, Father's CNIC, photograph) directly in Neon/Postgres. There is
+// no external file-storage service - an admin views/downloads a file
+// through a protected /admin route that streams these bytes back.
+model ApplicationDocument {
+  id            String   @id @default(cuid())
+  applicationId String
+  label         String
+  fileName      String
+  mimeType      String
+  fileSize      Int
+  data          Bytes
+  createdAt     DateTime @default(now())
+
+  application AdmissionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("application_documents")
 }
 
 // ============================================================

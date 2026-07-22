@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { getAdmissionsList } from "@/lib/queries/admin-lists";
+import { getAdminRoute } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +16,7 @@ const STATUS_TONE: Record<string, string> = {
 
 export default async function AdmissionsPage() {
   const applications = await getAdmissionsList();
+  const base = `/${getAdminRoute()}`;
 
   return (
     <>
@@ -38,12 +41,13 @@ export default async function AdmissionsPage() {
               <th>Program</th>
               <th>Submitted</th>
               <th>Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {applications.length === 0 ? (
               <tr>
-                <td colSpan={5} className="meta">
+                <td colSpan={6} className="meta">
                   No applications on record yet.
                 </td>
               </tr>
@@ -73,6 +77,11 @@ export default async function AdmissionsPage() {
                     >
                       {a.status.replace("_", " ")}
                     </span>
+                  </td>
+                  <td>
+                    <Link href={`${base}/admissions/${a.id}`} className="table-link">
+                      View
+                    </Link>
                   </td>
                 </tr>
               ))

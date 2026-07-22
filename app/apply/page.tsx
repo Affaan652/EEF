@@ -18,24 +18,28 @@ const PROGRAMS = [
 
 const REQUIRED_DOCUMENTS = [
   {
-    id: "dmc",
-    value: "SSC (Matric) DMC — 4 photocopies",
-    label: "Four photocopies of the SSC (Matric) Detailed Marks Certificate (DMC)",
+    id: "dmcFile",
+    label: "SSC (Matric) Detailed Marks Certificate (DMC)",
+    hint: "Upload a clear scan or photo. Bring 4 physical photocopies when you visit the office.",
+    accept: "image/jpeg,image/png,image/webp,application/pdf",
   },
   {
-    id: "bform",
-    value: "Student's B-Form",
+    id: "bformFile",
     label: "Student's B-Form",
+    hint: "Upload a clear scan or photo (JPG, PNG, or PDF).",
+    accept: "image/jpeg,image/png,image/webp,application/pdf",
   },
   {
-    id: "fathercnic",
-    value: "Father's CNIC",
-    label: "Father's CNIC (photocopy)",
+    id: "cnicFile",
+    label: "Father's CNIC",
+    hint: "Upload a clear scan or photo (JPG, PNG, or PDF).",
+    accept: "image/jpeg,image/png,image/webp,application/pdf",
   },
   {
-    id: "photos",
-    value: "6 passport-size photographs",
-    label: "Six (6) recent passport-size photographs",
+    id: "photoFile",
+    label: "Passport-size photograph",
+    hint: "Upload one recent photo. Bring 6 physical prints when you visit the office.",
+    accept: "image/jpeg,image/png,image/webp",
   },
 ];
 
@@ -68,9 +72,10 @@ export default function ApplyPage() {
             <code style={{ fontFamily: "var(--font-mono)" }}>
               {state.applicationNumber}
             </code>
-            . Save this number, and bring your original documents (SSC DMC,
-            B-Form, Father&apos;s CNIC, and photographs) when you visit the
-            admissions office — the registrar will contact you by email or
+            . Save this number. Your documents have been submitted online —
+            please still bring the original SSC (Matric) DMC (4
+            photocopies) and 6 passport-size photographs when you visit the
+            admissions office. The registrar will contact you by email or
             phone about the next steps.
           </p>
           <Link href="/" className="btn-primary" style={{ width: "100%" }}>
@@ -325,21 +330,25 @@ export default function ApplyPage() {
             Required documents
           </h2>
           <p className="field-hint" style={{ margin: "0 0 12px" }}>
-            Confirm you have the following ready — bring the originals and
-            photocopies when you visit the admissions office.
+            Upload a clear scan or photo of each document below (JPG, PNG, or
+            PDF, max 5MB each).
           </p>
-          <div className="document-checklist">
+          <div className="document-upload-list">
             {REQUIRED_DOCUMENTS.map((doc) => (
-              <label className="field-checkbox" htmlFor={doc.id} key={doc.id}>
+              <div className="document-upload-item" key={doc.id}>
+                <label className="field-label" htmlFor={doc.id}>
+                  {doc.label} *
+                </label>
                 <input
                   id={doc.id}
-                  name="documents"
-                  type="checkbox"
-                  value={doc.value}
+                  name={doc.id}
+                  type="file"
+                  accept={doc.accept}
                   required
+                  className="field-input field-file-input"
                 />
-                {doc.label}
-              </label>
+                <p className="field-hint">{doc.hint}</p>
+              </div>
             ))}
           </div>
 
