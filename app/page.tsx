@@ -1,75 +1,78 @@
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/public/logo.png";
 import campusHero from "@/public/campus-hero.jpg";
+import { SiteHeader } from "@/app/_components/site-header";
+import { SiteFooter } from "@/app/_components/site-footer";
 
 export default function Home() {
   return (
     <>
-      <header className="site-header">
-        <div className="site-header-inner">
-          <div className="site-brand">
-            <Image
-              src={logo}
-              alt="EEF Polytechnic Institute Haripur logo"
-              className="site-brand-logo"
-              width={40}
-              height={40}
-              priority
-            />
-            EEF College
-          </div>
-          <nav className="site-nav">
-            <a href="#services">Programs</a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="landing-hero">
         <div>
-          <div className="landing-eyebrow">Technical & Vocational Institute</div>
+          <div className="landing-eyebrow">
+            Government of Khyber Pakhtunkhwa · Est. 2009
+          </div>
           <h1 className="landing-title">
-            Three-year diploma programs in engineering and technology.
+            Technical education that leads to real careers.
           </h1>
           <p className="landing-lede">
-            EEF College offers 3-year diploma programs in Information
-            Technology, Civil, Mechanical, and Electrical disciplines. This
-            site is where the college runs admissions, fees, attendance,
-            and academic records.
+            Education Employees Foundation (EEF) Polytechnic Institute of
+            Haripur prepares skilled professionals through quality teaching,
+            practical training, and industry-focused education in Civil,
+            Electrical, Mechanical, and Information Technology.
           </p>
           <div className="landing-actions">
             <Link href="/apply" className="btn-primary">
               Apply for admission
             </Link>
+            <Link href="/courses" className="btn-ghost">
+              View courses
+            </Link>
           </div>
+          <p className="landing-note">
+            Applications for the current intake are open.
+          </p>
         </div>
 
         <div className="landing-hero-image">
           <Image
             src={campusHero}
-            alt="EEF College campus building"
+            alt="EEF Polytechnic Institute of Haripur campus building"
             priority
             sizes="(max-width: 860px) 100vw, 480px"
           />
         </div>
       </section>
 
+      <div className="stats-strip">
+        <div className="stats-strip-inner">
+          <div>
+            <div className="stats-strip-value">2009</div>
+            <div className="stats-strip-label">Institute established</div>
+          </div>
+          <div>
+            <div className="stats-strip-value">5</div>
+            <div className="stats-strip-label">Diploma & DAE programs</div>
+          </div>
+          <div>
+            <div className="stats-strip-value">3 Yrs</div>
+            <div className="stats-strip-label">Core DAE technologies</div>
+          </div>
+          <div>
+            <div className="stats-strip-value">40%</div>
+            <div className="stats-strip-label">Minimum SSC eligibility</div>
+          </div>
+        </div>
+      </div>
+
       <section className="landing-panel-section" id="services">
         <div className="landing-panel">
-          <div className="landing-panel-title">Diploma programs (3 years)</div>
+          <div className="landing-panel-title">Programs offered</div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">
-                Diploma in Information Technology (DIT)
-              </div>
-              <div className="landing-service-desc">
-                Software, networking, and systems fundamentals
-              </div>
-            </div>
-          </div>
-          <div className="landing-service">
-            <div>
-              <div className="landing-service-name">Civil Engineering</div>
+              <div className="landing-service-name">DAE Civil Technology</div>
               <div className="landing-service-desc">
                 Construction, surveying, structural design
               </div>
@@ -77,7 +80,15 @@ export default function Home() {
           </div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">Mechanical Engineering</div>
+              <div className="landing-service-name">DAE Electrical Technology</div>
+              <div className="landing-service-desc">
+                Power systems, wiring, industrial electronics
+              </div>
+            </div>
+          </div>
+          <div className="landing-service">
+            <div>
+              <div className="landing-service-name">DAE Mechanical Technology</div>
               <div className="landing-service-desc">
                 Manufacturing, machine design, thermodynamics
               </div>
@@ -85,20 +96,27 @@ export default function Home() {
           </div>
           <div className="landing-service">
             <div>
-              <div className="landing-service-name">Electrical Engineering</div>
+              <div className="landing-service-name">
+                Diploma in Information Technology (1 & 2 Year)
+              </div>
               <div className="landing-service-desc">
-                Power systems, wiring, industrial electronics
+                Software, networking, and systems fundamentals
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <footer className="site-footer" id="about">
-        EEF College - a technical institute offering 3-year diplomas in DIT,
-        Civil, Mechanical, and Electrical Engineering. Sign-in access is
-        restricted to authorized administrators.
-      </footer>
+      <section className="content-cta" style={{ paddingBottom: 56 }}>
+        <Link href="/about" className="btn-ghost" style={{ marginRight: 12 }}>
+          About the institute
+        </Link>
+        <Link href="/admissions" className="btn-ghost">
+          Admission requirements
+        </Link>
+      </section>
+
+      <SiteFooter />
     </>
   );
 }
