@@ -194,9 +194,9 @@ model AdmissionApplication {
   // Contact
   email    String
   phone    String
-  address  String
-  city     String
-  province String
+  address  String?
+  city     String?
+  province String?
   country  String @default("Pakistan")
 
   // Guardian

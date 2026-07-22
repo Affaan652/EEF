@@ -149,21 +149,6 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          <div className="form-grid">
-            <div>
-              <label className="field-label" htmlFor="nationality">
-                Nationality
-              </label>
-              <input id="nationality" name="nationality" className="field-input" />
-            </div>
-            <div>
-              <label className="field-label" htmlFor="cnic">
-                B-Form number
-              </label>
-              <input id="cnic" name="cnic" className="field-input" />
-            </div>
-          </div>
-
           <h2 className="panel-title" style={{ fontSize: 16, marginTop: 20 }}>
             Contact information
           </h2>
@@ -178,35 +163,10 @@ export default function ApplyPage() {
             className="field-input"
           />
 
-          <div className="form-grid">
-            <div>
-              <label className="field-label" htmlFor="phone">
-                Phone number *
-              </label>
-              <input id="phone" name="phone" required className="field-input" />
-            </div>
-            <div>
-              <label className="field-label" htmlFor="city">
-                City *
-              </label>
-              <input id="city" name="city" required className="field-input" />
-            </div>
-          </div>
-
-          <div className="form-grid">
-            <div>
-              <label className="field-label" htmlFor="province">
-                Province *
-              </label>
-              <input id="province" name="province" required className="field-input" />
-            </div>
-            <div>
-              <label className="field-label" htmlFor="address">
-                Address *
-              </label>
-              <input id="address" name="address" required className="field-input" />
-            </div>
-          </div>
+          <label className="field-label" htmlFor="phone">
+            Phone number *
+          </label>
+          <input id="phone" name="phone" required className="field-input" />
 
           <h2 className="panel-title" style={{ fontSize: 16, marginTop: 20 }}>
             Guardian information
@@ -262,15 +222,6 @@ export default function ApplyPage() {
               />
             </div>
           </div>
-
-          <label className="field-label" htmlFor="guardianOccupation">
-            Guardian occupation
-          </label>
-          <input
-            id="guardianOccupation"
-            name="guardianOccupation"
-            className="field-input"
-          />
 
           <h2 className="panel-title" style={{ fontSize: 16, marginTop: 20 }}>
             Academic information

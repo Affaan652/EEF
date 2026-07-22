@@ -70,12 +70,6 @@ export default async function AdmissionDetailPage({
           <span className="panel-row-meta">{application.phone}</span>
         </div>
         <div className="panel-row">
-          <span className="panel-row-title">Address</span>
-          <span className="panel-row-meta">
-            {application.address}, {application.city}, {application.province}
-          </span>
-        </div>
-        <div className="panel-row">
           <span className="panel-row-title">Guardian</span>
           <span className="panel-row-meta">
             {application.guardianName} ({application.guardianRelation}) —{" "}

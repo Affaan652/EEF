@@ -24,9 +24,6 @@ const REQUIRED_FIELDS = [
   "gender",
   "email",
   "phone",
-  "address",
-  "city",
-  "province",
   "guardianName",
   "guardianRelation",
   "guardianPhone",
@@ -147,16 +144,6 @@ export async function submitApplicationAction(
     return { error: "Enter a valid email address." };
   }
 
-  const cnic = String(formData.get("cnic") ?? "").trim() || null;
-  if (cnic) {
-    const existingCnic = await prisma.admissionApplication.findUnique({
-      where: { cnic },
-    });
-    if (existingCnic) {
-      return { error: "An application with this CNIC already exists." };
-    }
-  }
-
   // Read and validate each required document. Stop at the first failure
   // rather than partially processing - the applicant fixes one file and
   // resubmits.
@@ -177,20 +164,12 @@ export async function submitApplicationAction(
       lastName: values.lastName,
       dateOfBirth: new Date(values.dateOfBirth),
       gender: values.gender as "MALE" | "FEMALE" | "OTHER",
-      nationality: String(formData.get("nationality") ?? "").trim() || null,
-      cnic,
-      religion: String(formData.get("religion") ?? "").trim() || null,
       email,
       phone: values.phone,
-      address: values.address,
-      city: values.city,
-      province: values.province,
       guardianName: values.guardianName,
       guardianRelation: values.guardianRelation,
       guardianPhone: values.guardianPhone,
       guardianCnic: values.guardianCnic,
-      guardianOccupation:
-        String(formData.get("guardianOccupation") ?? "").trim() || null,
       desiredProgram: values.desiredProgram,
       previousSchool: values.previousSchool,
       previousMarks: previousMarks,
