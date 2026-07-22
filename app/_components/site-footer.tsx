@@ -22,12 +22,10 @@ export function SiteFooter() {
         <div className="site-footer-col">
           <div className="site-footer-title">Get started</div>
           <Link href="/apply">Apply for admission</Link>
-          <Link href="/login">Administration sign in</Link>
         </div>
       </div>
       <div className="site-footer-bottom">
-        Education Employees Foundation Polytechnic Institute, Haripur.
-        Sign-in access is restricted to authorized administrators.
+        © {new Date().getFullYear()} Education Employees Foundation Polytechnic Institute, Haripur. All rights reserved.
       </div>
     </footer>
   );

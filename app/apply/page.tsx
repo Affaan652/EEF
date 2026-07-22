@@ -9,10 +9,34 @@ import { submitApplicationAction, type ApplyState } from "@/lib/actions/apply";
 const initialState: ApplyState = {};
 
 const PROGRAMS = [
-  "Diploma in Information Technology (DIT)",
-  "Civil Engineering",
-  "Mechanical Engineering",
-  "Electrical Engineering",
+  "DAE Civil Technology",
+  "DAE Electrical Technology",
+  "DAE Mechanical Technology",
+  "Diploma in Information Technology (DIT) — 1 Year",
+  "Diploma in Information Technology (DIT) — 2 Years",
+];
+
+const REQUIRED_DOCUMENTS = [
+  {
+    id: "dmc",
+    value: "SSC (Matric) DMC — 4 photocopies",
+    label: "Four photocopies of the SSC (Matric) Detailed Marks Certificate (DMC)",
+  },
+  {
+    id: "bform",
+    value: "Student's B-Form",
+    label: "Student's B-Form",
+  },
+  {
+    id: "fathercnic",
+    value: "Father's CNIC",
+    label: "Father's CNIC (photocopy)",
+  },
+  {
+    id: "photos",
+    value: "6 passport-size photographs",
+    label: "Six (6) recent passport-size photographs",
+  },
 ];
 
 function SubmitButton() {
@@ -33,7 +57,7 @@ export default function ApplyPage() {
         <div className="auth-letterhead">
           <Image src={logo} alt="EEF College logo" className="auth-seal" width={40} height={40} priority />
           <div>
-            <div className="auth-letterhead-title">EEF College</div>
+            <div className="auth-letterhead-title">EEF Polytechnic Institute</div>
             <div className="auth-letterhead-sub">Admission Application</div>
           </div>
         </div>
@@ -44,8 +68,10 @@ export default function ApplyPage() {
             <code style={{ fontFamily: "var(--font-mono)" }}>
               {state.applicationNumber}
             </code>
-            . Save this number - the registrar's office will contact you by
-            email or phone about the next steps.
+            . Save this number, and bring your original documents (SSC DMC,
+            B-Form, Father&apos;s CNIC, and photographs) when you visit the
+            admissions office — the registrar will contact you by email or
+            phone about the next steps.
           </p>
           <Link href="/" className="btn-primary" style={{ width: "100%" }}>
             Back to home
@@ -60,7 +86,7 @@ export default function ApplyPage() {
       <div className="auth-letterhead">
         <Image src={logo} alt="EEF College logo" className="auth-seal" width={40} height={40} priority />
         <div>
-          <div className="auth-letterhead-title">EEF College</div>
+          <div className="auth-letterhead-title">EEF Polytechnic Institute</div>
           <div className="auth-letterhead-sub">Admission Application</div>
         </div>
       </div>
@@ -127,7 +153,7 @@ export default function ApplyPage() {
             </div>
             <div>
               <label className="field-label" htmlFor="cnic">
-                CNIC / B-Form number
+                B-Form number
               </label>
               <input id="cnic" name="cnic" className="field-input" />
             </div>
@@ -219,22 +245,37 @@ export default function ApplyPage() {
               />
             </div>
             <div>
-              <label className="field-label" htmlFor="guardianOccupation">
-                Guardian occupation
+              <label className="field-label" htmlFor="guardianCnic">
+                Father&apos;s CNIC *
               </label>
               <input
-                id="guardianOccupation"
-                name="guardianOccupation"
+                id="guardianCnic"
+                name="guardianCnic"
+                required
                 className="field-input"
+                placeholder="XXXXX-XXXXXXX-X"
               />
             </div>
           </div>
 
+          <label className="field-label" htmlFor="guardianOccupation">
+            Guardian occupation
+          </label>
+          <input
+            id="guardianOccupation"
+            name="guardianOccupation"
+            className="field-input"
+          />
+
           <h2 className="panel-title" style={{ fontSize: 16, marginTop: 20 }}>
             Academic information
           </h2>
+          <p className="field-hint" style={{ margin: "0 0 12px" }}>
+            Eligibility: passed SSC (Matric) with Science, with a minimum of
+            40% marks.
+          </p>
           <label className="field-label" htmlFor="desiredProgram">
-            Field / program you are applying to *
+            Program you are applying to *
           </label>
           <select
             id="desiredProgram"
@@ -253,7 +294,7 @@ export default function ApplyPage() {
           <div className="form-grid">
             <div>
               <label className="field-label" htmlFor="previousSchool">
-                Previous school *
+                School (SSC / Matric) *
               </label>
               <input
                 id="previousSchool"
@@ -264,14 +305,42 @@ export default function ApplyPage() {
             </div>
             <div>
               <label className="field-label" htmlFor="previousGrade">
-                Last grade / percentage
+                SSC marks obtained (%) *
               </label>
               <input
                 id="previousGrade"
                 name="previousGrade"
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                required
                 className="field-input"
+                placeholder="e.g. 65"
               />
             </div>
+          </div>
+
+          <h2 className="panel-title" style={{ fontSize: 16, marginTop: 20 }}>
+            Required documents
+          </h2>
+          <p className="field-hint" style={{ margin: "0 0 12px" }}>
+            Confirm you have the following ready — bring the originals and
+            photocopies when you visit the admissions office.
+          </p>
+          <div className="document-checklist">
+            {REQUIRED_DOCUMENTS.map((doc) => (
+              <label className="field-checkbox" htmlFor={doc.id} key={doc.id}>
+                <input
+                  id={doc.id}
+                  name="documents"
+                  type="checkbox"
+                  value={doc.value}
+                  required
+                />
+                {doc.label}
+              </label>
+            ))}
           </div>
 
           <div style={{ marginTop: 22 }}>

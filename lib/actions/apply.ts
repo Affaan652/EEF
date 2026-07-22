@@ -29,8 +29,17 @@ const REQUIRED_FIELDS = [
   "guardianName",
   "guardianRelation",
   "guardianPhone",
+  "guardianCnic",
   "desiredProgram",
   "previousSchool",
+  "previousGrade",
+] as const;
+
+const REQUIRED_DOCUMENTS = [
+  "SSC (Matric) DMC — 4 photocopies",
+  "Student's B-Form",
+  "Father's CNIC",
+  "6 passport-size photographs",
 ] as const;
 
 export async function submitApplicationAction(
@@ -45,6 +54,25 @@ export async function submitApplicationAction(
   const missing = REQUIRED_FIELDS.filter((f) => !values[f]);
   if (missing.length > 0) {
     return { error: "Please fill in all required fields." };
+  }
+
+  const previousMarks = Number(values.previousGrade);
+  if (Number.isNaN(previousMarks) || previousMarks < 0 || previousMarks > 100) {
+    return { error: "Enter your SSC marks as a percentage between 0 and 100." };
+  }
+  if (previousMarks < 40) {
+    return {
+      error:
+        "A minimum of 40% marks in the SSC (Matric) examination is required to apply.",
+    };
+  }
+
+  const confirmedDocuments = formData.getAll("documents").map(String);
+  if (confirmedDocuments.length < REQUIRED_DOCUMENTS.length) {
+    return {
+      error:
+        "Please confirm you have all four required documents ready before submitting.",
+    };
   }
 
   const email = values.email.toLowerCase();
@@ -80,13 +108,13 @@ export async function submitApplicationAction(
       guardianName: values.guardianName,
       guardianRelation: values.guardianRelation,
       guardianPhone: values.guardianPhone,
-      guardianCnic: String(formData.get("guardianCnic") ?? "").trim() || null,
+      guardianCnic: values.guardianCnic,
       guardianOccupation:
         String(formData.get("guardianOccupation") ?? "").trim() || null,
       desiredProgram: values.desiredProgram,
       previousSchool: values.previousSchool,
-      previousGrade:
-        String(formData.get("previousGrade") ?? "").trim() || null,
+      previousMarks: previousMarks,
+      documents: confirmedDocuments,
       status: "SUBMITTED",
       submittedAt: new Date(),
     },
@@ -100,12 +128,12 @@ export async function submitApplicationAction(
     subject: `Application received - ${application.applicationNumber}`,
     html: `
       <p>Dear ${values.firstName},</p>
-      <p>Your admission application to EEF College has been received.</p>
+      <p>Your admission application to EEF Polytechnic Institute of Haripur has been received.</p>
       <p><strong>Application number:</strong> ${application.applicationNumber}</p>
       <p><strong>Program applied for:</strong> ${values.desiredProgram}</p>
       <p>Save your application number - the registrar's office will contact
       you by email or phone about the next steps.</p>
-      <p>EEF College Admissions Office</p>
+      <p>EEF Polytechnic Institute Admissions Office</p>
     `,
   });
 

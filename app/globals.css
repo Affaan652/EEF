@@ -1426,16 +1426,30 @@ body[data-admin-theme="dark"] .shell {
 
 .field-checkbox {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 14px;
   margin-top: 18px;
   color: var(--text);
+  line-height: 1.5;
 }
 
 .field-checkbox input {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.document-checklist {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 16px 16px;
+}
+
+.document-checklist .field-checkbox {
+  margin-top: 14px;
 }
 
 .btn-small {
