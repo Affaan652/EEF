@@ -75,11 +75,9 @@ const ICONS: Record<string, JSX.Element> = {
 export default function AdminSidebar({
   navGroups,
   email,
-  logoutAction,
 }: {
   navGroups: NavGroup[];
   email: string;
-  logoutAction: () => void;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -140,9 +138,6 @@ export default function AdminSidebar({
             </span>
             <span className="sidebar-user-email">{email}</span>
           </div>
-          <form action={logoutAction} className="logout-form">
-            <button type="submit">Sign out</button>
-          </form>
         </div>
       </div>
     </aside>

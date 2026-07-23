@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getSession, isAdminRole, getAdminRoute } from "@/lib/auth";
-import { logoutAction } from "@/app/login/actions";
 import AdminSidebar from "./_components/admin-sidebar";
 
 export default async function AdminLayout({
@@ -49,25 +48,9 @@ export default async function AdminLayout({
   ];
 
   return (
-    <>
-      <script
-        // Runs before React hydrates so the admin console never flashes
-        // the wrong theme. Sets an attribute on <body> (not <html>), and
-        // every dark-mode rule is scoped to `body[data-admin-theme="dark"]
-        // .shell` — so this can never leak into the public site or the
-        // login/apply pages, even across client-side navigation.
-        dangerouslySetInnerHTML={{
-          __html: `try{var t=localStorage.getItem("eef-admin-theme");document.body.setAttribute("data-admin-theme",t==="dark"?"dark":"light");}catch(e){}`,
-        }}
-      />
-      <div className="shell">
-        <AdminSidebar
-          navGroups={navGroups}
-          email={session.email}
-          logoutAction={logoutAction}
-        />
-        <div className="main">{children}</div>
-      </div>
-    </>
+    <div className="shell">
+      <AdminSidebar navGroups={navGroups} email={session.email} />
+      <div className="main">{children}</div>
+    </div>
   );
 }

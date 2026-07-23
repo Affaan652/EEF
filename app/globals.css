@@ -947,73 +947,50 @@ a:hover {
    ============================================================ */
 
 .shell {
-  --bg: #f6f5fb;
-  --bg-subtle: #f0eefa;
-  --bg-muted: #e7e3f5;
+  --bg: #ffffff;
+  --bg-subtle: #f2f8f4;
+  --bg-muted: #e5f1ea;
   --surface: #ffffff;
-  --border: #e2dcf2;
-  --border-strong: #cabfe8;
+  --border: #d4e6db;
+  --border-strong: #aecdb9;
 
-  --text: #221f3d;
-  --text-muted: #635f85;
-  --text-faint: #938fb0;
+  --text: #16231b;
+  --text-muted: #4c5f53;
+  --text-faint: #7c9086;
 
   /* primary accent (buttons, headings, links, focus) */
-  --navy: #6d28d9;
-  --navy-dark: #5b21b6;
-  --navy-soft: rgba(109, 40, 217, 0.08);
+  --navy: #14532d;
+  --navy-dark: #0f3d21;
+  --navy-soft: rgba(20, 83, 45, 0.08);
 
   /* secondary accent (tags, record codes, focus ring) */
-  --gold: #9333ea;
-  --gold-soft: rgba(147, 51, 234, 0.1);
+  --gold: #16a34a;
+  --gold-soft: rgba(22, 163, 74, 0.1);
 
   --good: #15803d;
   --good-soft: rgba(21, 128, 61, 0.08);
   --rust: #b91c1c;
   --rust-soft: rgba(185, 28, 28, 0.08);
 
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 248px 1fr;
   background: var(--bg);
 }
 
-body[data-admin-theme="dark"] .shell {
-  --bg: #150f2c;
-  --bg-subtle: #1a1436;
-  --bg-muted: #221a45;
-  --surface: #1a1436;
-  --border: #332a5c;
-  --border-strong: #453a75;
-
-  --text: #f1edff;
-  --text-muted: #b8afe0;
-  --text-faint: #8b81b5;
-
-  --navy: #a78bfa;
-  --navy-dark: #c4b5fd;
-  --navy-soft: rgba(167, 139, 250, 0.14);
-
-  --gold: #d8b4fe;
-  --gold-soft: rgba(216, 180, 254, 0.14);
-
-  --good: #34d399;
-  --good-soft: rgba(52, 211, 153, 0.12);
-  --rust: #f87171;
-  --rust-soft: rgba(248, 113, 113, 0.12);
-}
-
 /* ------------------------------------------------------------
-   Sidebar — a fixed navy → dark purple identity that stays
-   consistent whether the console is in light or dark mode
+   Sidebar — solid deep-green identity, white text throughout
    ------------------------------------------------------------ */
 
 .sidebar {
-  background: linear-gradient(165deg, #191340 0%, #341764 55%, #4c1d95 100%);
+  background: linear-gradient(165deg, #0f3d21 0%, #14532d 55%, #166534 100%);
   color: #ffffff;
   padding: 22px 16px;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar-mark {
@@ -1094,7 +1071,7 @@ body[data-admin-theme="dark"] .shell {
   bottom: 8px;
   width: 3px;
   border-radius: 3px;
-  background: #d8b4fe;
+  background: #4ade80;
 }
 
 .sidebar-footer {
@@ -1133,31 +1110,10 @@ body[data-admin-theme="dark"] .shell {
   white-space: nowrap;
 }
 
-.logout-form button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
-  padding: 10px 12px;
-  min-height: 40px;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: var(--font-body);
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-}
-
-.logout-form button:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.06);
-}
-
 .main {
   padding: 32px 40px 60px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .main-header {
@@ -1636,65 +1592,29 @@ body[data-admin-theme="dark"] .shell {
 }
 
 /* ------------------------------------------------------------
-   Theme toggle (Settings page) — admin only
-   ------------------------------------------------------------ */
-
-.theme-toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.theme-toggle-desc {
-  color: var(--text-muted);
-  font-size: 14px;
-  max-width: 340px;
-}
-
-.theme-toggle {
-  display: inline-flex;
-  border: 1px solid var(--border-strong);
-  border-radius: 7px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.theme-toggle-option {
-  background: var(--surface);
-  color: var(--text-muted);
-  border: none;
-  padding: 10px 18px;
-  min-height: 40px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: var(--font-body);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.theme-toggle-option + .theme-toggle-option {
-  border-left: 1px solid var(--border-strong);
-}
-
-.theme-toggle-option[aria-pressed="true"] {
-  background: var(--navy);
-  color: #ffffff;
-}
-
-/* ------------------------------------------------------------
    Responsive breakpoints
    ------------------------------------------------------------ */
 
 @media (max-width: 860px) {
   .shell {
     grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
   }
 
   .sidebar {
     flex-direction: column;
     align-items: stretch;
+    height: auto;
+    overflow-y: visible;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+
+  .main {
+    height: auto;
+    overflow-y: visible;
   }
 
   .sidebar-top-row {
@@ -1938,19 +1858,6 @@ body[data-admin-theme="dark"] .shell {
   .form-grid {
     grid-template-columns: 1fr;
     gap: 0;
-  }
-
-  .theme-toggle-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .theme-toggle {
-    width: 100%;
-  }
-
-  .theme-toggle-option {
-    flex: 1;
   }
 
   .bar-chart-row {
