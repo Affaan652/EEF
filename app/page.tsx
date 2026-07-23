@@ -9,41 +9,59 @@ export default function Home() {
     <>
       <SiteHeader />
 
-      <section className="landing-hero">
-        <div>
-          <div className="landing-eyebrow">
-            Government of Khyber Pakhtunkhwa · Est. 2009
+      <section className="landing-hero-wrap">
+        <div className="landing-hero">
+          <div className="landing-hero-copy">
+            <div className="landing-badge">
+              <span className="landing-badge-dot" aria-hidden="true" />
+              Admissions open for the 2026 intake
+            </div>
+            <div className="landing-eyebrow">
+              Government of Khyber Pakhtunkhwa · Est. 2009
+            </div>
+            <h1 className="landing-title">
+              Technical education that leads to real careers.
+            </h1>
+            <p className="landing-lede">
+              Education Employees Foundation (EEF) Polytechnic Institute of
+              Haripur prepares skilled professionals through quality teaching,
+              practical training, and industry-focused education in Civil,
+              Electrical, Mechanical, and Information Technology.
+            </p>
+            <div className="landing-actions">
+              <Link href="/apply" className="btn-primary">
+                Apply for admission
+              </Link>
+              <Link href="/courses" className="btn-ghost">
+                View courses
+              </Link>
+            </div>
+            <p className="landing-note">
+              Applications for the current intake are open.
+            </p>
           </div>
-          <h1 className="landing-title">
-            Technical education that leads to real careers.
-          </h1>
-          <p className="landing-lede">
-            Education Employees Foundation (EEF) Polytechnic Institute of
-            Haripur prepares skilled professionals through quality teaching,
-            practical training, and industry-focused education in Civil,
-            Electrical, Mechanical, and Information Technology.
-          </p>
-          <div className="landing-actions">
-            <Link href="/apply" className="btn-primary">
-              Apply for admission
-            </Link>
-            <Link href="/courses" className="btn-ghost">
-              View courses
-            </Link>
+
+          <div className="landing-hero-image">
+            <Image
+              src={campusHero}
+              alt="EEF Polytechnic Institute of Haripur campus building"
+              priority
+              sizes="(max-width: 860px) 100vw, 480px"
+            />
           </div>
-          <p className="landing-note">
-            Applications for the current intake are open.
-          </p>
         </div>
 
-        <div className="landing-hero-image">
-          <Image
-            src={campusHero}
-            alt="EEF Polytechnic Institute of Haripur campus building"
-            priority
-            sizes="(max-width: 860px) 100vw, 480px"
+        <svg
+          className="landing-hero-wave"
+          viewBox="0 0 1440 60"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0,32 C240,60 480,4 720,20 C960,36 1200,54 1440,24 L1440,60 L0,60 Z"
+            fill="var(--bg-subtle)"
           />
-        </div>
+        </svg>
       </section>
 
       <div className="stats-strip">

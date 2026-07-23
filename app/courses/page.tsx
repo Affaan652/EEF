@@ -56,8 +56,11 @@ export default function CoursesPage() {
       <div className="content-body">
         <div className="content-section">
           <div className="course-grid">
-            {COURSES.map((c) => (
+            {COURSES.map((c, i) => (
               <div className="course-card" key={c.title}>
+                <span className="course-card-index">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <span className="course-card-badge">{c.badge}</span>
                 <h3 className="course-card-title">{c.title}</h3>
                 <p className="course-card-desc">{c.desc}</p>
