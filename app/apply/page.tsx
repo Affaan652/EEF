@@ -281,8 +281,9 @@ export default function ApplyPage() {
             Required documents
           </h2>
           <p className="field-hint" style={{ margin: "0 0 12px" }}>
-            Upload a clear scan or photo of each document below (JPG, PNG, or
-            PDF, max 5MB each).
+            Upload just <strong>one clear copy</strong> of each document
+            below (JPG, PNG, or PDF, max 5MB each). Physical copies are only
+            needed when you visit the admissions office in person.
           </p>
           <div className="document-upload-list">
             {REQUIRED_DOCUMENTS.map((doc) => (

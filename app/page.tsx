@@ -16,10 +16,10 @@ export default function Home() {
               Technical education that leads to real careers.
             </h1>
             <p className="landing-lede">
-              EEF Polytechnic Institute of Haripur prepares skilled
-              professionals through quality teaching, practical training, and
-              industry-focused education in Civil, Electrical, Mechanical,
-              and Information Technology.
+              A Government of Khyber Pakhtunkhwa institute. EEF Polytechnic
+              prepares skilled professionals through quality teaching,
+              practical training, and industry-focused education in Civil,
+              Electrical, Mechanical, and Information Technology.
             </p>
             <div className="landing-actions">
               <Link href="/apply" className="btn-primary">
@@ -79,41 +79,44 @@ export default function Home() {
       </div>
 
       <section className="landing-panel-section" id="services">
-        <div className="landing-panel">
-          <div className="landing-panel-title">Programs offered</div>
-          <div className="landing-service">
-            <div>
-              <div className="landing-service-name">DAE Civil Technology</div>
-              <div className="landing-service-desc">
-                Construction, surveying, structural design
-              </div>
-            </div>
+        <div className="section-heading">
+          <div className="section-heading-eyebrow">What we teach</div>
+          <h2 className="section-heading-title">Programs offered</h2>
+        </div>
+        <div className="course-grid">
+          <div className="course-card">
+            <span className="course-card-index">01</span>
+            <span className="course-card-badge">DAE · 3 Years</span>
+            <h3 className="course-card-title">DAE Civil Technology</h3>
+            <p className="course-card-desc">
+              Construction, surveying, and structural design.
+            </p>
           </div>
-          <div className="landing-service">
-            <div>
-              <div className="landing-service-name">DAE Electrical Technology</div>
-              <div className="landing-service-desc">
-                Power systems, wiring, industrial electronics
-              </div>
-            </div>
+          <div className="course-card">
+            <span className="course-card-index">02</span>
+            <span className="course-card-badge">DAE · 3 Years</span>
+            <h3 className="course-card-title">DAE Electrical Technology</h3>
+            <p className="course-card-desc">
+              Power systems, wiring, and industrial electronics.
+            </p>
           </div>
-          <div className="landing-service">
-            <div>
-              <div className="landing-service-name">DAE Mechanical Technology</div>
-              <div className="landing-service-desc">
-                Manufacturing, machine design, thermodynamics
-              </div>
-            </div>
+          <div className="course-card">
+            <span className="course-card-index">03</span>
+            <span className="course-card-badge">DAE · 3 Years</span>
+            <h3 className="course-card-title">DAE Mechanical Technology</h3>
+            <p className="course-card-desc">
+              Manufacturing, machine design, and thermodynamics.
+            </p>
           </div>
-          <div className="landing-service">
-            <div>
-              <div className="landing-service-name">
-                Diploma in Information Technology (1 & 2 Year)
-              </div>
-              <div className="landing-service-desc">
-                Software, networking, and systems fundamentals
-              </div>
-            </div>
+          <div className="course-card">
+            <span className="course-card-index">04</span>
+            <span className="course-card-badge">DIT · 1 & 2 Years</span>
+            <h3 className="course-card-title">
+              Diploma in Information Technology
+            </h3>
+            <p className="course-card-desc">
+              Software, networking, and systems fundamentals.
+            </p>
           </div>
         </div>
       </section>

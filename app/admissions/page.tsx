@@ -75,6 +75,16 @@ export default function AdmissionsPage() {
           </div>
         </div>
 
+        <div className="content-section">
+          <div className="content-callout">
+            <strong>Applying online?</strong> Upload just{" "}
+            <strong>one clear copy</strong> of each document above. The
+            photocopy and photograph counts listed are only for when you
+            visit the admissions office in person — bring the originals plus
+            those physical copies at that time.
+          </div>
+        </div>
+
         <div className="content-cta">
           <Link href="/apply" className="btn-primary">
             Start your application
