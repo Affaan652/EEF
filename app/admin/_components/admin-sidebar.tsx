@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 type NavItem = {
@@ -12,6 +12,8 @@ type NavGroup = {
   label: string;
   items: NavItem[];
 };
+
+const COLLAPSE_STORAGE_KEY = "eef-admin-sidebar-collapsed";
 
 // Small, self-contained line icons (no external icon library, no emoji).
 // Keyed by nav item name since the label set is fixed and known.
@@ -61,13 +63,12 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M9 14.2l1.9 1.9 4-4.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  // A proper cog silhouette (outer gear ring + inner hub) rather than
+  // plain spokes, so it reads clearly as "Settings" even at 18px.
   Settings: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="7.6" strokeDasharray="2.2 2.5" />
       <circle cx="12" cy="12" r="3.1" />
-      <path
-        d="M12 3.6v2.1M12 18.3v2.1M20.4 12h-2.1M5.7 12H3.6M17.6 6.4l-1.5 1.5M7.9 16.1l-1.5 1.5M17.6 17.6l-1.5-1.5M7.9 7.9 6.4 6.4"
-        strokeLinecap="round"
-      />
     </svg>
   ),
 };
@@ -81,14 +82,37 @@ export default function AdminSidebar({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const initial = email.trim().charAt(0).toUpperCase() || "?";
 
+  useEffect(() => {
+    const stored = window.localStorage.getItem(COLLAPSE_STORAGE_KEY);
+    setCollapsed(stored === "true");
+  }, []);
+
+  function toggleCollapsed() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      window.localStorage.setItem(COLLAPSE_STORAGE_KEY, String(next));
+      document.body.setAttribute("data-sidebar-collapsed", String(next));
+      return next;
+    });
+  }
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar-top-row">
-        <div>
-          <div className="sidebar-mark">EEF Founders</div>
-        </div>
+        <div className="sidebar-mark">EEF Founders</div>
+        <button
+          type="button"
+          className="sidebar-collapse-toggle"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={toggleCollapsed}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         <button
           type="button"
           className="sidebar-toggle"
@@ -115,6 +139,7 @@ export default function AdminSidebar({
                 <li key={item.href}>
                   <a
                     href={item.href}
+                    title={item.name}
                     className={`nav-item ${
                       pathname === item.href ? "active" : ""
                     }`}

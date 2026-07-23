@@ -977,6 +977,13 @@ a:hover {
   display: grid;
   grid-template-columns: 248px 1fr;
   background: var(--bg);
+  transition: grid-template-columns 0.2s ease;
+}
+
+@media (min-width: 861px) {
+  body[data-sidebar-collapsed="true"] .shell {
+    grid-template-columns: 76px 1fr;
+  }
 }
 
 /* ------------------------------------------------------------
@@ -990,7 +997,16 @@ a:hover {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  min-height: 0;
   overflow-y: auto;
+}
+
+.sidebar-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 26px;
 }
 
 .sidebar-mark {
@@ -998,9 +1014,87 @@ a:hover {
   font-weight: 600;
   font-size: 17px;
   color: #ffffff;
-  margin-bottom: 26px;
   padding-left: 10px;
   letter-spacing: 0.01em;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.sidebar-collapse-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+.sidebar-collapse-toggle svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ------------------------------------------------------------
+   Collapsed (icon-only) sidebar state - desktop only
+   ------------------------------------------------------------ */
+
+@media (min-width: 861px) {
+  .sidebar.collapsed {
+    align-items: center;
+  }
+
+  .sidebar.collapsed .sidebar-mark {
+    width: 0;
+    opacity: 0;
+    padding-left: 0;
+  }
+
+  .sidebar.collapsed .sidebar-top-row {
+    justify-content: center;
+  }
+
+  .sidebar.collapsed .nav-group-label {
+    display: none;
+  }
+
+  .sidebar.collapsed .nav-item {
+    justify-content: center;
+    gap: 0;
+    padding: 10px;
+  }
+
+  .sidebar.collapsed .nav-item-text {
+    display: none;
+  }
+
+  .sidebar.collapsed .nav-item.active::before {
+    left: -6px;
+  }
+
+  .sidebar.collapsed .sidebar-user {
+    justify-content: center;
+  }
+
+  .sidebar.collapsed .sidebar-user-email {
+    display: none;
+  }
+
+  .sidebar.collapsed .sidebar-collapse-toggle svg {
+    transform: rotate(180deg);
+  }
 }
 
 .nav-group-label {
@@ -1113,6 +1207,7 @@ a:hover {
 .main {
   padding: 32px 40px 60px;
   height: 100vh;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -1621,6 +1716,10 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  .sidebar-collapse-toggle {
+    display: none;
   }
 
   .sidebar-mark {

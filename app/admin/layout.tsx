@@ -48,9 +48,19 @@ export default async function AdminLayout({
   ];
 
   return (
-    <div className="shell">
-      <AdminSidebar navGroups={navGroups} email={session.email} />
-      <div className="main">{children}</div>
-    </div>
+    <>
+      <script
+        // Runs before React hydrates so the sidebar doesn't visibly
+        // expand-then-collapse (or vice versa) on load. Only ever reads
+        // a plain localStorage flag - no theming, no tracking.
+        dangerouslySetInnerHTML={{
+          __html: `try{var c=localStorage.getItem("eef-admin-sidebar-collapsed");document.body.setAttribute("data-sidebar-collapsed",c==="true"?"true":"false");}catch(e){}`,
+        }}
+      />
+      <div className="shell">
+        <AdminSidebar navGroups={navGroups} email={session.email} />
+        <div className="main">{children}</div>
+      </div>
+    </>
   );
 }
