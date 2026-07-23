@@ -12,21 +12,14 @@ export default function Home() {
       <section className="landing-hero-wrap">
         <div className="landing-hero">
           <div className="landing-hero-copy">
-            <div className="landing-badge">
-              <span className="landing-badge-dot" aria-hidden="true" />
-              Admissions open for the 2026 intake
-            </div>
-            <div className="landing-eyebrow">
-              Government of Khyber Pakhtunkhwa · Est. 2009
-            </div>
             <h1 className="landing-title">
               Technical education that leads to real careers.
             </h1>
             <p className="landing-lede">
-              Education Employees Foundation (EEF) Polytechnic Institute of
-              Haripur prepares skilled professionals through quality teaching,
-              practical training, and industry-focused education in Civil,
-              Electrical, Mechanical, and Information Technology.
+              EEF Polytechnic Institute of Haripur prepares skilled
+              professionals through quality teaching, practical training, and
+              industry-focused education in Civil, Electrical, Mechanical,
+              and Information Technology.
             </p>
             <div className="landing-actions">
               <Link href="/apply" className="btn-primary">
