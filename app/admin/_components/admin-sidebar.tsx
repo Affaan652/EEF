@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 type NavItem = {
@@ -135,7 +136,7 @@ export default function AdminSidebar({
             <ul className="nav-list">
               {group.items.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     title={item.name}
                     className={`nav-item ${
@@ -147,7 +148,7 @@ export default function AdminSidebar({
                       {ICONS[item.name]}
                     </span>
                     <span className="nav-item-text">{item.name}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
