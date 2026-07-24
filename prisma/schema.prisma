@@ -281,9 +281,10 @@ model Student {
   profilePhoto String?
 
   // Contact (record-keeping only - this does not create a login)
-  email   String?
-  phone   String?
-  address String?
+  email           String?
+  phone           String?
+  whatsappNumber  String?
+  address         String?
 
   // Guardian
   guardianName  String?

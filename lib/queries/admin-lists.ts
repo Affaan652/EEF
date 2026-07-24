@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 // Each function here fetches a bounded, ordered slice of records for an
 // admin list page. These are read-only overview lists (no search/pagination
@@ -7,11 +8,82 @@ import { prisma } from "@/lib/prisma";
 
 const LIST_LIMIT = 100;
 
-export async function getStudentsList() {
+// Flat, filtered student list - used when the admin is searching by name/
+// roll number and/or has picked a specific class from the filter.
+export async function getStudentsList(
+  params: { q?: string; classId?: string } = {}
+) {
+  const { q, classId } = params;
+
+  const where: Prisma.StudentWhereInput = {};
+
+  if (q) {
+    where.OR = [
+      { firstName: { contains: q, mode: "insensitive" } },
+      { lastName: { contains: q, mode: "insensitive" } },
+      { rollNumber: { contains: q, mode: "insensitive" } },
+    ];
+  }
+
+  if (classId) {
+    where.classes = { some: { classId, isActive: true } };
+  }
+
   return prisma.student.findMany({
+    where,
     take: LIST_LIMIT,
     orderBy: { createdAt: "desc" },
+    include: {
+      department: { select: { name: true } },
+      classes: {
+        where: { isActive: true },
+        take: 1,
+        include: { class: { select: { id: true, name: true, section: true } } },
+      },
+    },
+  });
+}
+
+// Default students-page view (no search/filter applied yet): students
+// grouped under their current class, so "each class gets its own row" of
+// students rather than one long undifferentiated list. Students with no
+// active class assignment are grouped under "Unassigned".
+export async function getStudentsGroupedByClass() {
+  const classes = await prisma.class.findMany({
+    orderBy: [{ name: "asc" }, { section: "asc" }],
+    include: {
+      academicYear: { select: { label: true } },
+      students: {
+        where: { isActive: true },
+        include: {
+          student: {
+            include: { department: { select: { name: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  const unassigned = await prisma.student.findMany({
+    where: { classes: { none: { isActive: true } } },
+    orderBy: { createdAt: "desc" },
     include: { department: { select: { name: true } } },
+  });
+
+  return { classes, unassigned };
+}
+
+// For the class filter dropdown (students list) and the class-select
+// field on the add/edit student form.
+export async function getClassOptions() {
+  return prisma.class.findMany({
+    orderBy: [{ name: "asc" }, { section: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      section: true,
+      academicYear: { select: { label: true } },
+    },
   });
 }
 

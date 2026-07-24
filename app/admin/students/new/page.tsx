@@ -1,15 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { createStudentAction } from "@/lib/actions/student-admin";
-import { StudentCreateForm } from "@/app/admin/_components/student-form";
+import { getClassOptions } from "@/lib/queries/admin-lists";
+import { StudentForm } from "@/app/admin/_components/student-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewStudentPage() {
-  const departments = await prisma.department.findMany({
-    where: { isActive: true },
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
+  const [departments, classes] = await Promise.all([
+    prisma.department.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    getClassOptions(),
+  ]);
 
   return (
     <>
@@ -19,8 +23,13 @@ export default async function NewStudentPage() {
       </div>
       <hr className="ledger-rule" />
 
-      <div className="panel" style={{ maxWidth: 560 }}>
-        <StudentCreateForm departments={departments} action={createStudentAction} />
+      <div className="panel" style={{ maxWidth: 640 }}>
+        <StudentForm
+          departments={departments}
+          classes={classes}
+          action={createStudentAction}
+          mode="create"
+        />
       </div>
     </>
   );
