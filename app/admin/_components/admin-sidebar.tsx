@@ -63,27 +63,25 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M9 14.2l1.9 1.9 4-4.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  // A proper cog silhouette (outer gear ring + inner hub) rather than
-  // plain spokes, so it reads clearly as "Settings" even at 18px.
+  // A hex-nut/bolt silhouette - reads clearly as "Settings" even at
+  // 18-20px, and stays crisp since it's straight lines rather than
+  // fiddly gear teeth.
   Settings: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="12" cy="12" r="7.6" strokeDasharray="2.2 2.5" />
-      <circle cx="12" cy="12" r="3.1" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+      <path d="M12 2.8 20 7.4v9.2L12 21.2 4 16.6V7.4Z" />
+      <circle cx="12" cy="12" r="3.2" />
     </svg>
   ),
 };
 
 export default function AdminSidebar({
   navGroups,
-  email,
 }: {
   navGroups: NavGroup[];
-  email: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const initial = email.trim().charAt(0).toUpperCase() || "?";
 
   useEffect(() => {
     const stored = window.localStorage.getItem(COLLAPSE_STORAGE_KEY);
@@ -155,15 +153,6 @@ export default function AdminSidebar({
             </ul>
           </div>
         ))}
-
-        <div className="sidebar-footer">
-          <div className="sidebar-user">
-            <span className="sidebar-user-avatar" aria-hidden="true">
-              {initial}
-            </span>
-            <span className="sidebar-user-email">{email}</span>
-          </div>
-        </div>
       </div>
     </aside>
   );

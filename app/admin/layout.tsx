@@ -58,7 +58,7 @@ export default async function AdminLayout({
         }}
       />
       <div className="shell">
-        <AdminSidebar navGroups={navGroups} email={session.email} />
+        <AdminSidebar navGroups={navGroups} />
         <div className="main">{children}</div>
       </div>
     </>
