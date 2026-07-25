@@ -322,40 +322,42 @@ export function StudentForm({
       </select>
       <input type="hidden" name="classId" value={resolvedClassId} />
 
-      <div className="form-grid">
-        <div>
-          <label className="field-label" htmlFor="yearStart">
-            Year start
-          </label>
-          <input
-            id="yearStart"
-            name="yearStart"
-            type="number"
-            inputMode="numeric"
-            placeholder="e.g. 2024"
-            className="field-input"
-            defaultValue={defaults?.yearStart ?? ""}
-          />
+      <div className="year-span-group">
+        <div className="form-grid">
+          <div>
+            <label className="field-label" htmlFor="yearStart">
+              Year start
+            </label>
+            <input
+              id="yearStart"
+              name="yearStart"
+              type="number"
+              inputMode="numeric"
+              placeholder="e.g. 2024"
+              className="field-input field-input-number"
+              defaultValue={defaults?.yearStart ?? ""}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor="yearEnd">
+              Year end
+            </label>
+            <input
+              id="yearEnd"
+              name="yearEnd"
+              type="number"
+              inputMode="numeric"
+              placeholder="e.g. 2027"
+              className="field-input field-input-number"
+              defaultValue={defaults?.yearEnd ?? ""}
+            />
+          </div>
         </div>
-        <div>
-          <label className="field-label" htmlFor="yearEnd">
-            Year end
-          </label>
-          <input
-            id="yearEnd"
-            name="yearEnd"
-            type="number"
-            inputMode="numeric"
-            placeholder="e.g. 2027"
-            className="field-input"
-            defaultValue={defaults?.yearEnd ?? ""}
-          />
-        </div>
+        <p className="field-hint">
+          Enter the years this student will study at the college (start
+          year and end year).
+        </p>
       </div>
-      <p className="field-hint" style={{ marginTop: -6, marginBottom: 18 }}>
-        Enter the years this student will study at the college (start year
-        and end year).
-      </p>
 
       <h2 className="panel-title" style={{ fontSize: 16, marginTop: 22 }}>
         Contact
@@ -413,11 +415,6 @@ export function StudentForm({
           />
         </div>
       </div>
-
-      <p className="field-hint">
-        This adds a student record for internal use (classes, attendance,
-        exams, fees). It does not create a login of any kind.
-      </p>
 
       <div style={{ marginTop: 8, display: "flex", gap: 10 }}>
         {mode === "create" ? (

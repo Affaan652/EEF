@@ -1600,6 +1600,35 @@ a:hover {
   margin: 10px 0 0;
 }
 
+.year-span-group {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 16px 14px;
+  margin: 18px 0 22px;
+}
+
+.year-span-group .form-grid {
+  margin-bottom: 0;
+}
+
+.year-span-group .field-hint {
+  margin: 12px 0 0;
+}
+
+/* Hide the native up/down spinner arrows on number inputs - they render
+   with a plain, dated browser style that clashes with the rest of the
+   form's design. */
+.field-input-number::-webkit-outer-spin-button,
+.field-input-number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field-input-number {
+  -moz-appearance: textfield;
+}
+
 .field-success {
   background: var(--good-soft);
   color: var(--good);
