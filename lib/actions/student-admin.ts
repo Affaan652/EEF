@@ -35,6 +35,8 @@ type StudentFormValues = {
   guardianPhone: string | null;
   departmentId: string | null;
   classId: string | null;
+  yearStart: number | null;
+  yearEnd: number | null;
 };
 
 function readStudentForm(formData: FormData): StudentFormValues | { error: string } {
@@ -51,6 +53,25 @@ function readStudentForm(formData: FormData): StudentFormValues | { error: strin
   const dateOfBirth = new Date(dateOfBirthRaw);
   if (Number.isNaN(dateOfBirth.getTime())) {
     return { error: "Enter a valid date of birth." };
+  }
+
+  const yearStartRaw = String(formData.get("yearStart") ?? "").trim();
+  const yearEndRaw = String(formData.get("yearEnd") ?? "").trim();
+  let yearStart: number | null = null;
+  let yearEnd: number | null = null;
+
+  if (yearStartRaw || yearEndRaw) {
+    if (!yearStartRaw || !yearEndRaw) {
+      return { error: "Enter both a start year and an end year, or leave both blank." };
+    }
+    yearStart = Number(yearStartRaw);
+    yearEnd = Number(yearEndRaw);
+    if (!Number.isInteger(yearStart) || !Number.isInteger(yearEnd)) {
+      return { error: "Enter valid years." };
+    }
+    if (yearEnd < yearStart) {
+      return { error: "End year cannot be before the start year." };
+    }
   }
 
   const email = String(formData.get("email") ?? "").trim().toLowerCase() || null;
@@ -76,6 +97,8 @@ function readStudentForm(formData: FormData): StudentFormValues | { error: strin
     guardianPhone,
     departmentId,
     classId,
+    yearStart,
+    yearEnd,
   };
 }
 
@@ -151,6 +174,8 @@ export async function createStudentAction(
       gender: parsed.gender,
       dateOfBirth: parsed.dateOfBirth,
       departmentId: parsed.departmentId ?? undefined,
+      yearStart: parsed.yearStart,
+      yearEnd: parsed.yearEnd,
     },
   });
 
@@ -199,6 +224,8 @@ export async function updateStudentAction(
       gender: parsed.gender,
       dateOfBirth: parsed.dateOfBirth,
       departmentId: parsed.departmentId,
+      yearStart: parsed.yearStart,
+      yearEnd: parsed.yearEnd,
     },
   });
 

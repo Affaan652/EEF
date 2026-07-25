@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { updateStudentAction } from "@/lib/actions/student-admin";
 import { getClassOptions } from "@/lib/queries/admin-lists";
+import { getAdminRoute } from "@/lib/auth";
 import { StudentForm } from "@/app/admin/_components/student-form";
 
 export const dynamic = "force-dynamic";
@@ -38,6 +39,8 @@ export default async function EditStudentPage({
     notFound();
   }
 
+  const base = `/${getAdminRoute()}`;
+
   return (
     <>
       <div className="main-header">
@@ -54,6 +57,7 @@ export default async function EditStudentPage({
           classes={classes}
           action={updateStudentAction}
           mode="edit"
+          cancelHref={`${base}/students/${student.id}`}
           defaults={{
             id: student.id,
             firstName: student.firstName,
@@ -68,6 +72,8 @@ export default async function EditStudentPage({
             guardianPhone: student.guardianPhone,
             departmentId: student.departmentId,
             classId: student.classes[0]?.classId ?? null,
+            yearStart: student.yearStart,
+            yearEnd: student.yearEnd,
           }}
         />
       </div>

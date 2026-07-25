@@ -108,6 +108,14 @@ export default async function ViewStudentPage({
           </span>
         </div>
         <div className="panel-row">
+          <span className="panel-row-title">Enrolled years</span>
+          <span className="panel-row-meta">
+            {student.yearStart && student.yearEnd
+              ? `${student.yearStart} - ${student.yearEnd}`
+              : "Not set"}
+          </span>
+        </div>
+        <div className="panel-row">
           <span className="panel-row-title">Admitted</span>
           <span className="panel-row-meta">
             {new Date(student.admissionDate).toLocaleDateString("en-GB", {

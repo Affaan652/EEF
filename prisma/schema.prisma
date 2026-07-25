@@ -290,6 +290,13 @@ model Student {
   guardianName  String?
   guardianPhone String?
 
+  // The calendar-year span this student is enrolled across (e.g. 2024 to
+  // 2027 for a 3-year program starting in 2024). This is what the
+  // students-list Year filter uses - separate from "Year 1/2/3 of the
+  // program", which is encoded in the Class name instead.
+  yearStart Int?
+  yearEnd   Int?
+
   admissionDate DateTime @default(now())
 
   createdAt DateTime @default(now())

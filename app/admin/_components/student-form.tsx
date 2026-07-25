@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import type { ActionState } from "@/lib/actions/student-admin";
+import { classCategory } from "@/lib/class-label";
 
 type Department = { id: string; name: string };
 type ClassOption = {
@@ -11,6 +13,49 @@ type ClassOption = {
   section: string | null;
   academicYear: { label: string };
 };
+
+const YEAR_OPTIONS = [
+  { value: "1", label: "1st Year" },
+  { value: "2", label: "2nd Year" },
+  { value: "3", label: "3rd Year" },
+];
+
+// Builds departmentId -> year -> classId, so picking a Department + Year
+// in the form resolves to the one matching class behind the scenes. The
+// two are matched by category (Civil/Electrical/Mechanical/DIT) extracted
+// from their names, since classes don't carry a real department field.
+function buildClassLookup(departments: Department[], classes: ClassOption[]) {
+  const classesByCategory = new Map<string, Map<string, string>>();
+  for (const c of classes) {
+    const category = classCategory(c.name);
+    const yearMatch = c.name.match(/Year\s+(\d+)/i);
+    if (!category || !yearMatch) continue;
+    if (!classesByCategory.has(category)) {
+      classesByCategory.set(category, new Map());
+    }
+    classesByCategory.get(category)!.set(yearMatch[1], c.id);
+  }
+
+  const lookup = new Map<string, Map<string, string>>();
+  for (const d of departments) {
+    const category = classCategory(d.name);
+    if (category && classesByCategory.has(category)) {
+      lookup.set(d.id, classesByCategory.get(category)!);
+    }
+  }
+  return lookup;
+}
+
+// A department may only run some of the 3 years (DIT only runs 2), so the
+// Year dropdown only offers years that actually have a class to assign.
+function availableYears(
+  lookup: Map<string, Map<string, string>>,
+  departmentId: string
+) {
+  const years = lookup.get(departmentId);
+  if (!years) return YEAR_OPTIONS;
+  return YEAR_OPTIONS.filter((y) => years.has(y.value));
+}
 
 const MONTHS = [
   "January",
@@ -126,12 +171,9 @@ type StudentDefaults = {
   guardianPhone?: string | null;
   departmentId?: string | null;
   classId?: string | null;
+  yearStart?: number | null;
+  yearEnd?: number | null;
 };
-
-function classLabel(c: ClassOption) {
-  const section = c.section ? ` - ${c.section}` : "";
-  return `${c.name}${section} (${c.academicYear.label})`;
-}
 
 function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: string }) {
   const { pending } = useFormStatus();
@@ -150,14 +192,35 @@ export function StudentForm({
   action,
   defaults,
   mode,
+  cancelHref,
 }: {
   departments: Department[];
   classes: ClassOption[];
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
   defaults?: StudentDefaults;
   mode: "create" | "edit";
+  cancelHref: string;
 }) {
   const [state, formAction] = useFormState(action, initialState);
+
+  const lookup = useMemo(
+    () => buildClassLookup(departments, classes),
+    [departments, classes]
+  );
+
+  const [departmentId, setDepartmentId] = useState(defaults?.departmentId ?? "");
+  const [year, setYear] = useState(() => {
+    if (!defaults?.departmentId || !defaults?.classId) return "";
+    const years = lookup.get(defaults.departmentId);
+    if (!years) return "";
+    for (const [y, id] of years) {
+      if (id === defaults.classId) return y;
+    }
+    return "";
+  });
+
+  const resolvedClassId = lookup.get(departmentId)?.get(year) ?? "";
+  const yearOptions = availableYears(lookup, departmentId);
 
   return (
     <form action={formAction} className="admin-form">
@@ -238,7 +301,11 @@ export function StudentForm({
         id="departmentId"
         name="departmentId"
         className="field-input"
-        defaultValue={defaults?.departmentId ?? ""}
+        value={departmentId}
+        onChange={(e) => {
+          setDepartmentId(e.target.value);
+          setYear("");
+        }}
       >
         <option value="">Unassigned</option>
         {departments.map((d) => (
@@ -248,22 +315,62 @@ export function StudentForm({
         ))}
       </select>
 
-      <label className="field-label" htmlFor="classId">
-        Class
+      <label className="field-label" htmlFor="year">
+        Year
       </label>
       <select
-        id="classId"
-        name="classId"
+        id="year"
         className="field-input"
-        defaultValue={defaults?.classId ?? ""}
+        value={year}
+        disabled={!departmentId}
+        onChange={(e) => setYear(e.target.value)}
       >
-        <option value="">Not assigned to a class</option>
-        {classes.map((c) => (
-          <option key={c.id} value={c.id}>
-            {classLabel(c)}
+        <option value="">
+          {departmentId ? "Select year" : "Choose a department first"}
+        </option>
+        {yearOptions.map((y) => (
+          <option key={y.value} value={y.value}>
+            {y.label}
           </option>
         ))}
       </select>
+      <input type="hidden" name="classId" value={resolvedClassId} />
+
+      <div className="form-grid">
+        <div>
+          <label className="field-label" htmlFor="yearStart">
+            Year start
+          </label>
+          <input
+            id="yearStart"
+            name="yearStart"
+            type="number"
+            inputMode="numeric"
+            placeholder="e.g. 2024"
+            className="field-input"
+            defaultValue={defaults?.yearStart ?? ""}
+          />
+        </div>
+        <div>
+          <label className="field-label" htmlFor="yearEnd">
+            Year end
+          </label>
+          <input
+            id="yearEnd"
+            name="yearEnd"
+            type="number"
+            inputMode="numeric"
+            placeholder="e.g. 2027"
+            className="field-input"
+            defaultValue={defaults?.yearEnd ?? ""}
+          />
+        </div>
+      </div>
+      <p className="field-hint" style={{ marginTop: -6, marginBottom: 18 }}>
+        The calendar years this student is enrolled across (e.g. 2024 to
+        2027). This is what the Year filter on the students list searches
+        by.
+      </p>
 
       <h2 className="panel-title" style={{ fontSize: 16, marginTop: 22 }}>
         Contact
@@ -327,12 +434,15 @@ export function StudentForm({
         exams, fees). It does not create a login of any kind.
       </p>
 
-      <div style={{ marginTop: 8 }}>
+      <div style={{ marginTop: 8, display: "flex", gap: 10 }}>
         {mode === "create" ? (
           <SubmitButton label="Add student" pendingLabel="Saving..." />
         ) : (
           <SubmitButton label="Save changes" pendingLabel="Saving..." />
         )}
+        <Link href={cancelHref} className="btn-ghost">
+          Cancel
+        </Link>
       </div>
     </form>
   );

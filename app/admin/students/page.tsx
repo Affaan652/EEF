@@ -5,6 +5,7 @@ import {
   getClassOptions,
 } from "@/lib/queries/admin-lists";
 import { getAdminRoute } from "@/lib/auth";
+import { shortClassLabel } from "@/lib/class-label";
 
 export const dynamic = "force-dynamic";
 
@@ -98,21 +99,25 @@ export default async function StudentsPage({
     error?: string;
     q?: string;
     classId?: string;
+    calendarYear?: string;
   };
 }) {
   const base = `/${getAdminRoute()}`;
   const q = searchParams.q?.trim() ?? "";
   const classId = searchParams.classId ?? "";
-  const isFiltering = Boolean(q || classId);
+  const calendarYear = searchParams.calendarYear ?? "";
+  const isFiltering = Boolean(q || classId || calendarYear);
 
   const classOptions = await getClassOptions();
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 16 }, (_, i) => currentYear + 2 - i);
 
   // Fetch exactly the data this render needs: a flat filtered list when
   // searching/filtering, or the grouped-by-class view otherwise. Both are
   // resolved up front (this is an async Server Component) rather than
   // awaited inline inside JSX, which React can't do.
   const flatStudents = isFiltering
-    ? await getStudentsList({ q, classId })
+    ? await getStudentsList({ q, classId, calendarYear })
     : null;
   const grouped = isFiltering ? null : await getStudentsGroupedByClass();
   const nonEmptyClasses = grouped
@@ -143,8 +148,19 @@ export default async function StudentsPage({
             <option value="">All classes</option>
             {classOptions.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name}
-                {c.section ? ` - ${c.section}` : ""} ({c.academicYear.label})
+                {shortClassLabel(c.name)}
+              </option>
+            ))}
+          </select>
+          <select
+            name="calendarYear"
+            className="field-input"
+            defaultValue={calendarYear}
+          >
+            <option value="">All years</option>
+            {yearOptions.map((y) => (
+              <option key={y} value={y}>
+                {y}
               </option>
             ))}
           </select>

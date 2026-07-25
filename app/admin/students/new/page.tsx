@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { createStudentAction } from "@/lib/actions/student-admin";
 import { getClassOptions } from "@/lib/queries/admin-lists";
+import { getAdminRoute } from "@/lib/auth";
 import { StudentForm } from "@/app/admin/_components/student-form";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,8 @@ export default async function NewStudentPage() {
     }),
     getClassOptions(),
   ]);
+
+  const base = `/${getAdminRoute()}`;
 
   return (
     <>
@@ -29,6 +32,7 @@ export default async function NewStudentPage() {
           classes={classes}
           action={createStudentAction}
           mode="create"
+          cancelHref={`${base}/students`}
         />
       </div>
     </>

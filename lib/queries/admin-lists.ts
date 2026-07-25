@@ -9,11 +9,12 @@ import type { Prisma } from "@prisma/client";
 const LIST_LIMIT = 100;
 
 // Flat, filtered student list - used when the admin is searching by name/
-// roll number and/or has picked a specific class from the filter.
+// roll number and/or has picked a specific class and/or calendar year from
+// the filters.
 export async function getStudentsList(
-  params: { q?: string; classId?: string } = {}
+  params: { q?: string; classId?: string; calendarYear?: string } = {}
 ) {
-  const { q, classId } = params;
+  const { q, classId, calendarYear } = params;
 
   const where: Prisma.StudentWhereInput = {};
 
@@ -27,6 +28,18 @@ export async function getStudentsList(
 
   if (classId) {
     where.classes = { some: { classId, isActive: true } };
+  }
+
+  if (calendarYear) {
+    const yearNum = Number(calendarYear);
+    if (Number.isInteger(yearNum)) {
+      // A student "was around" in this calendar year if it falls
+      // anywhere within their enrolled yearStart..yearEnd span - this is
+      // independent of the class filter above, so both can be applied
+      // together (e.g. "Civil 1" students who were enrolled in 2025).
+      where.yearStart = { lte: yearNum };
+      where.yearEnd = { gte: yearNum };
+    }
   }
 
   return prisma.student.findMany({
