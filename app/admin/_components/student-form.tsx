@@ -26,35 +26,24 @@ const YEAR_OPTIONS = [
 // from their names, since classes don't carry a real department field.
 function buildClassLookup(departments: Department[], classes: ClassOption[]) {
   const classesByCategory = new Map<string, Map<string, string>>();
-  for (const c of classes) {
+  classes.forEach((c) => {
     const category = classCategory(c.name);
     const yearMatch = c.name.match(/Year\s+(\d+)/i);
-    if (!category || !yearMatch) continue;
+    if (!category || !yearMatch) return;
     if (!classesByCategory.has(category)) {
       classesByCategory.set(category, new Map());
     }
     classesByCategory.get(category)!.set(yearMatch[1], c.id);
-  }
+  });
 
   const lookup = new Map<string, Map<string, string>>();
-  for (const d of departments) {
+  departments.forEach((d) => {
     const category = classCategory(d.name);
     if (category && classesByCategory.has(category)) {
       lookup.set(d.id, classesByCategory.get(category)!);
     }
-  }
+  });
   return lookup;
-}
-
-// A department may only run some of the 3 years (DIT only runs 2), so the
-// Year dropdown only offers years that actually have a class to assign.
-function availableYears(
-  lookup: Map<string, Map<string, string>>,
-  departmentId: string
-) {
-  const years = lookup.get(departmentId);
-  if (!years) return YEAR_OPTIONS;
-  return YEAR_OPTIONS.filter((y) => years.has(y.value));
 }
 
 const MONTHS = [
@@ -221,7 +210,6 @@ export function StudentForm({
   });
 
   const resolvedClassId = lookup.get(departmentId)?.get(year) ?? "";
-  const yearOptions = availableYears(lookup, departmentId);
 
   return (
     <form action={formAction} className="admin-form">
@@ -323,13 +311,10 @@ export function StudentForm({
         id="year"
         className="field-input"
         value={year}
-        disabled={!departmentId}
         onChange={(e) => setYear(e.target.value)}
       >
-        <option value="">
-          {departmentId ? "Select year" : "Choose a department first"}
-        </option>
-        {yearOptions.map((y) => (
+        <option value="">Select year</option>
+        {YEAR_OPTIONS.map((y) => (
           <option key={y.value} value={y.value}>
             {y.label}
           </option>
@@ -368,9 +353,8 @@ export function StudentForm({
         </div>
       </div>
       <p className="field-hint" style={{ marginTop: -6, marginBottom: 18 }}>
-        The calendar years this student is enrolled across (e.g. 2024 to
-        2027). This is what the Year filter on the students list searches
-        by.
+        Enter the years this student will study at the college (start year
+        and end year).
       </p>
 
       <h2 className="panel-title" style={{ fontSize: 16, marginTop: 22 }}>

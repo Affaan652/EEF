@@ -109,8 +109,7 @@ export default async function StudentsPage({
   const isFiltering = Boolean(q || classId || calendarYear);
 
   const classOptions = await getClassOptions();
-  const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 16 }, (_, i) => currentYear + 2 - i);
+  const yearOptions = Array.from({ length: 2050 - 2015 + 1 }, (_, i) => 2050 - i);
 
   // Fetch exactly the data this render needs: a flat filtered list when
   // searching/filtering, or the grouped-by-class view otherwise. Both are
