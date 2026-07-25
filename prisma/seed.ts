@@ -81,14 +81,14 @@ async function main() {
         where: {
           name_section_academicYearId: {
             name: className,
-            section: null,
+            section: "",
             academicYearId: academicYear.id,
           },
         },
         update: {},
         create: {
           name: className,
-          section: null,
+          section: "",
           academicYearId: academicYear.id,
           capacity: 40,
         },
