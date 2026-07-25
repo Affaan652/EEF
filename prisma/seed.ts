@@ -41,6 +41,64 @@ async function main() {
 
   console.log(`Admin account ready: ${admin.email} (role: ${admin.role})`);
   console.log("Sign in at /login, then change this password from a real admin-facing settings page once you build one.");
+
+  // ------------------------------------------------------------
+  // Academic year, departments, and classes
+  //
+  // Departments match the programs listed on the public site. Classes
+  // are named per department per year - DAE programs (Civil, Electrical,
+  // Mechanical) run 3 years; DIT only runs 2 years.
+  // ------------------------------------------------------------
+
+  const academicYear = await prisma.academicYear.upsert({
+    where: { label: "2026-2027" },
+    update: {},
+    create: {
+      label: "2026-2027",
+      startDate: new Date("2026-08-01"),
+      endDate: new Date("2027-07-31"),
+      isCurrent: true,
+    },
+  });
+
+  const departments = [
+    { name: "DAE Civil Technology", code: "CIV", years: 3 },
+    { name: "DAE Electrical Technology", code: "ELE", years: 3 },
+    { name: "DAE Mechanical Technology", code: "MEC", years: 3 },
+    { name: "Diploma in Information Technology (DIT)", code: "DIT", years: 2 },
+  ];
+
+  for (const dept of departments) {
+    const department = await prisma.department.upsert({
+      where: { code: dept.code },
+      update: { name: dept.name },
+      create: { name: dept.name, code: dept.code, isActive: true },
+    });
+
+    for (let year = 1; year <= dept.years; year++) {
+      const className = `${dept.name} - Year ${year}`;
+      await prisma.class.upsert({
+        where: {
+          name_section_academicYearId: {
+            name: className,
+            section: null,
+            academicYearId: academicYear.id,
+          },
+        },
+        update: {},
+        create: {
+          name: className,
+          section: null,
+          academicYearId: academicYear.id,
+          capacity: 40,
+        },
+      });
+    }
+
+    console.log(`Department ready: ${department.name} (${dept.years} year(s))`);
+  }
+
+  console.log("Academic year, departments, and classes are seeded.");
 }
 
 main()

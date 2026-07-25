@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import type { ActionState } from "@/lib/actions/student-admin";
 
@@ -10,6 +11,106 @@ type ClassOption = {
   section: string | null;
   academicYear: { label: string };
 };
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function daysInMonth(month: number, year: number) {
+  return new Date(year, month, 0).getDate();
+}
+
+// Plain Day/Month/Year selects instead of <input type="date">. The native
+// date picker (especially in the packaged desktop app's webview) was
+// getting stuck open - it wouldn't close after picking a date or clicking
+// elsewhere. Selects have no popup to get stuck, so this sidesteps the
+// bug entirely. A hidden input still carries the combined "YYYY-MM-DD"
+// value under the same field name, so the server action needs no changes.
+function DateOfBirthField({ defaultValue }: { defaultValue?: string }) {
+  const currentYear = new Date().getFullYear();
+  const years = useMemo(
+    () => Array.from({ length: 70 }, (_, i) => currentYear - 10 - i),
+    [currentYear]
+  );
+
+  const initial = defaultValue ? defaultValue.split("-").map(Number) : null;
+  const [year, setYear] = useState<number | "">(initial ? initial[0] : "");
+  const [month, setMonth] = useState<number | "">(initial ? initial[1] : "");
+  const [day, setDay] = useState<number | "">(initial ? initial[2] : "");
+
+  const maxDay = year && month ? daysInMonth(month, year) : 31;
+  const dayOptions = Array.from({ length: maxDay }, (_, i) => i + 1);
+
+  const combined =
+    year && month && day
+      ? `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
+          2,
+          "0"
+        )}`
+      : "";
+
+  return (
+    <div className="dob-field">
+      <input type="hidden" name="dateOfBirth" value={combined} />
+      <select
+        aria-label="Day"
+        className="field-input"
+        value={day}
+        onChange={(e) => setDay(e.target.value ? Number(e.target.value) : "")}
+      >
+        <option value="">Day</option>
+        {dayOptions.map((d) => (
+          <option key={d} value={d}>
+            {d}
+          </option>
+        ))}
+      </select>
+      <select
+        aria-label="Month"
+        className="field-input"
+        value={month}
+        onChange={(e) => {
+          const next = e.target.value ? Number(e.target.value) : "";
+          setMonth(next);
+          if (next && day && day > daysInMonth(next, year || currentYear)) {
+            setDay(daysInMonth(next, year || currentYear));
+          }
+        }}
+      >
+        <option value="">Month</option>
+        {MONTHS.map((m, i) => (
+          <option key={m} value={i + 1}>
+            {m}
+          </option>
+        ))}
+      </select>
+      <select
+        aria-label="Year"
+        className="field-input"
+        value={year}
+        onChange={(e) => setYear(e.target.value ? Number(e.target.value) : "")}
+      >
+        <option value="">Year</option>
+        {years.map((y) => (
+          <option key={y} value={y}>
+            {y}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 type StudentDefaults = {
   id?: string;
@@ -111,22 +212,6 @@ export function StudentForm({
           />
         </div>
         <div>
-          <label className="field-label" htmlFor="dateOfBirth">
-            Date of birth
-          </label>
-          <input
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            required
-            className="field-input"
-            defaultValue={defaults?.dateOfBirth}
-          />
-        </div>
-      </div>
-
-      <div className="form-grid">
-        <div>
           <label className="field-label" htmlFor="gender">
             Gender
           </label>
@@ -141,25 +226,27 @@ export function StudentForm({
             <option value="OTHER">Other</option>
           </select>
         </div>
-        <div>
-          <label className="field-label" htmlFor="departmentId">
-            Department / Program
-          </label>
-          <select
-            id="departmentId"
-            name="departmentId"
-            className="field-input"
-            defaultValue={defaults?.departmentId ?? ""}
-          >
-            <option value="">Unassigned</option>
-            {departments.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
+
+      <label className="field-label">Date of birth</label>
+      <DateOfBirthField defaultValue={defaults?.dateOfBirth} />
+
+      <label className="field-label" htmlFor="departmentId">
+        Department / Program
+      </label>
+      <select
+        id="departmentId"
+        name="departmentId"
+        className="field-input"
+        defaultValue={defaults?.departmentId ?? ""}
+      >
+        <option value="">Unassigned</option>
+        {departments.map((d) => (
+          <option key={d.id} value={d.id}>
+            {d.name}
+          </option>
+        ))}
+      </select>
 
       <label className="field-label" htmlFor="classId">
         Class
@@ -181,18 +268,6 @@ export function StudentForm({
       <h2 className="panel-title" style={{ fontSize: 16, marginTop: 22 }}>
         Contact
       </h2>
-      <label className="field-label" htmlFor="email">
-        Email address (optional)
-      </label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        className="field-input"
-        placeholder="name@example.com"
-        defaultValue={defaults?.email ?? ""}
-      />
-
       <div className="form-grid">
         <div>
           <label className="field-label" htmlFor="phone">

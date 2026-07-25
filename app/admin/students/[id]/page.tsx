@@ -122,10 +122,6 @@ export default async function ViewStudentPage({
       <div className="panel" style={{ maxWidth: 640 }}>
         <h2 className="panel-title">Contact</h2>
         <div className="panel-row">
-          <span className="panel-row-title">Email</span>
-          <span className="panel-row-meta">{student.email ?? "Not provided"}</span>
-        </div>
-        <div className="panel-row">
           <span className="panel-row-title">Phone</span>
           <span className="panel-row-meta">{student.phone ?? "Not provided"}</span>
         </div>
