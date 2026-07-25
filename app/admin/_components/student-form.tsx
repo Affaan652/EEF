@@ -213,10 +213,11 @@ export function StudentForm({
     if (!defaults?.departmentId || !defaults?.classId) return "";
     const years = lookup.get(defaults.departmentId);
     if (!years) return "";
-    for (const [y, id] of years) {
-      if (id === defaults.classId) return y;
-    }
-    return "";
+    let found = "";
+    years.forEach((id, y) => {
+      if (id === defaults.classId) found = y;
+    });
+    return found;
   });
 
   const resolvedClassId = lookup.get(departmentId)?.get(year) ?? "";
