@@ -17,6 +17,7 @@ export function SiteFooter() {
           <Link href="/about">About the institute</Link>
           <Link href="/courses">Courses offered</Link>
           <Link href="/admissions">Admissions</Link>
+          <Link href="/fees">Fee structure</Link>
           <Link href="/rules">Student rules</Link>
         </div>
         <div className="site-footer-col">

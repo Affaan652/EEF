@@ -614,6 +614,52 @@ a:hover {
   color: var(--text);
 }
 
+.fee-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.fee-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+}
+
+.fee-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.fee-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.fee-table tbody tr:hover {
+  background: var(--bg-subtle);
+}
+
+.fee-table-amount {
+  text-align: right;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.fee-table tfoot td {
+  padding: 14px 18px;
+  border-top: 2px solid var(--navy);
+  background: var(--navy-soft);
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.fee-table tfoot .fee-table-amount {
+  font-size: 16px;
+}
+
 .content-callout strong {
   color: var(--navy);
 }
@@ -1538,6 +1584,21 @@ a:hover {
   color: var(--navy);
 }
 
+.table-link-danger {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rust);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.table-link-danger:hover {
+  text-decoration: underline;
+}
+
 /* ------------------------------------------------------------
    Banners (success / error messages after an action)
    ------------------------------------------------------------ */
@@ -1728,6 +1789,70 @@ a:hover {
 
 .panel-danger {
   border-color: var(--rust);
+}
+
+/* ------------------------------------------------------------
+   Fees panel (student profile) - assign / pay / remove
+   ------------------------------------------------------------ */
+
+.fee-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  background: var(--bg-subtle);
+}
+
+.fee-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.fee-payment-list {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fee-payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.fee-payment-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.fee-payment-form .field-input {
+  min-height: 38px;
+  padding: 7px 10px;
+  font-size: 13.5px;
+  width: auto;
+  flex: 1;
+  min-width: 100px;
+}
+
+.fee-assign-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.fee-assign-form .field-input {
+  flex: 1;
+  min-width: 200px;
 }
 
 /* ------------------------------------------------------------
@@ -1934,6 +2059,28 @@ a:hover {
     font-size: 24px;
   }
 
+  .fee-block-header {
+    flex-direction: column;
+  }
+
+  .fee-payment-form,
+  .fee-assign-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fee-payment-form .field-input,
+  .fee-assign-form .field-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .fee-payment-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
   .panel {
     padding: 16px;
   }
@@ -2070,6 +2217,11 @@ a:hover {
   .course-grid,
   .admissions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .fee-table td {
+    padding: 10px 12px;
+    font-size: 13.5px;
   }
 }
 

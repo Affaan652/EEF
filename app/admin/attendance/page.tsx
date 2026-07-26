@@ -1,9 +1,17 @@
+import Link from "next/link";
 import { getAttendanceOverview } from "@/lib/queries/admin-lists";
+import { deleteAttendanceAction } from "@/lib/actions/attendance-admin";
+import { getAdminRoute } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function AttendancePage() {
+export default async function AttendancePage({
+  searchParams,
+}: {
+  searchParams: { deleted?: string };
+}) {
   const { summaryByClass, recent } = await getAttendanceOverview();
+  const base = `/${getAdminRoute()}`;
 
   return (
     <>
@@ -12,6 +20,10 @@ export default async function AttendancePage() {
         <h1 className="main-title">Attendance</h1>
       </div>
       <hr className="ledger-rule" />
+
+      {searchParams.deleted && (
+        <div className="banner banner-good">Attendance record deleted.</div>
+      )}
 
       <div className="panel">
         <h2 className="panel-title">Today, by class</h2>
@@ -33,6 +45,9 @@ export default async function AttendancePage() {
         <span className="table-count">
           {recent.length} recent record(s)
         </span>
+        <Link href={`${base}/attendance/mark`} className="btn-primary btn-small">
+          Mark attendance
+        </Link>
       </div>
 
       <div className="table-wrap">
@@ -43,12 +58,13 @@ export default async function AttendancePage() {
               <th>Class</th>
               <th>Date</th>
               <th>Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {recent.length === 0 ? (
               <tr>
-                <td colSpan={4} className="meta">
+                <td colSpan={5} className="meta">
                   No attendance recorded yet.
                 </td>
               </tr>
@@ -82,6 +98,14 @@ export default async function AttendancePage() {
                     >
                       {a.status}
                     </span>
+                  </td>
+                  <td>
+                    <form action={deleteAttendanceAction}>
+                      <input type="hidden" name="attendanceId" value={a.id} />
+                      <button type="submit" className="table-link table-link-danger">
+                        Delete
+                      </button>
+                    </form>
                   </td>
                 </tr>
               ))

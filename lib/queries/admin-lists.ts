@@ -196,3 +196,35 @@ export async function getAttendanceOverview() {
 
   return { summaryByClass, recent };
 }
+
+// For the "Mark attendance" page: every active student currently assigned
+// to a class, along with whatever attendance status is already recorded
+// for the chosen date (if any), so re-opening the page for a date that
+// was already marked shows the existing marks instead of blanks.
+export async function getClassStudentsWithAttendance(
+  classId: string,
+  date: Date
+) {
+  const studentClasses = await prisma.studentClass.findMany({
+    where: { classId, isActive: true },
+    include: {
+      student: {
+        select: { id: true, firstName: true, lastName: true, rollNumber: true },
+      },
+    },
+    orderBy: { student: { rollNumber: "asc" } },
+  });
+
+  const existing = await prisma.attendance.findMany({
+    where: { classId, date },
+    select: { studentId: true, status: true },
+  });
+  const statusByStudent = Object.fromEntries(
+    existing.map((a) => [a.studentId, a.status])
+  );
+
+  return studentClasses.map((sc) => ({
+    ...sc.student,
+    status: statusByStudent[sc.student.id] ?? "PRESENT",
+  }));
+}

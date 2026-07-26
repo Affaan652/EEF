@@ -2,16 +2,53 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { deleteStudentAction } from "@/lib/actions/student-admin";
+import {
+  assignFeeStructureAction,
+  recordPaymentAction,
+  deleteStudentFeeAction,
+  deletePaymentAction,
+} from "@/lib/actions/fee-payment-admin";
 import { getAdminRoute } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
+
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat("en-PK", {
+    style: "currency",
+    currency: "PKR",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+function formatDate(date: Date) {
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+const STATUS_TONE: Record<string, string> = {
+  PAID: "good",
+  PARTIALLY_PAID: "neutral",
+  UNPAID: "rust",
+  OVERDUE: "rust",
+  WAIVED: "neutral",
+};
 
 export default async function ViewStudentPage({
   params,
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { updated?: string };
+  searchParams: {
+    updated?: string;
+    error?: string;
+    feeAssigned?: string;
+    paymentRecorded?: string;
+    feeRemoved?: string;
+    paymentRemoved?: string;
+  };
 }) {
   const student = await prisma.student.findUnique({
     where: { id: params.id },
@@ -30,12 +67,26 @@ export default async function ViewStudentPage({
           },
         },
       },
+      feeStructures: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          feeStructure: { select: { name: true, totalAmount: true } },
+          payments: { orderBy: { paidAt: "desc" } },
+        },
+      },
     },
   });
 
   if (!student) {
     notFound();
   }
+
+  const assignedStructureIds = student.feeStructures.map((sf) => sf.feeStructureId);
+  const availableStructures = await prisma.feeStructure.findMany({
+    where: { isActive: true, id: { notIn: assignedStructureIds } },
+    select: { id: true, name: true, totalAmount: true },
+    orderBy: { name: "asc" },
+  });
 
   const base = `/${getAdminRoute()}`;
   const currentClass = student.classes[0]?.class;
@@ -52,6 +103,21 @@ export default async function ViewStudentPage({
 
       {searchParams.updated && (
         <div className="banner banner-good">Student record updated.</div>
+      )}
+      {searchParams.feeAssigned && (
+        <div className="banner banner-good">Fee structure assigned.</div>
+      )}
+      {searchParams.paymentRecorded && (
+        <div className="banner banner-good">Payment recorded.</div>
+      )}
+      {searchParams.feeRemoved && (
+        <div className="banner banner-good">Fee assignment removed.</div>
+      )}
+      {searchParams.paymentRemoved && (
+        <div className="banner banner-good">Payment removed.</div>
+      )}
+      {searchParams.error && (
+        <div className="banner banner-bad">{searchParams.error}</div>
       )}
 
       <div className="panel" style={{ maxWidth: 640 }}>
@@ -83,13 +149,7 @@ export default async function ViewStudentPage({
         </div>
         <div className="panel-row">
           <span className="panel-row-title">Date of birth</span>
-          <span className="panel-row-meta">
-            {new Date(student.dateOfBirth).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
-          </span>
+          <span className="panel-row-meta">{formatDate(student.dateOfBirth)}</span>
         </div>
         <div className="panel-row">
           <span className="panel-row-title">Department</span>
@@ -117,13 +177,7 @@ export default async function ViewStudentPage({
         </div>
         <div className="panel-row">
           <span className="panel-row-title">Admitted</span>
-          <span className="panel-row-meta">
-            {new Date(student.admissionDate).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
-          </span>
+          <span className="panel-row-meta">{formatDate(student.admissionDate)}</span>
         </div>
       </div>
 
@@ -155,6 +209,110 @@ export default async function ViewStudentPage({
             {student.guardianPhone ?? "Not provided"}
           </span>
         </div>
+      </div>
+
+      <div className="panel" style={{ maxWidth: 640 }}>
+        <h2 className="panel-title">Fees</h2>
+
+        {student.feeStructures.length === 0 ? (
+          <p className="panel-empty">No fee structures assigned yet.</p>
+        ) : (
+          student.feeStructures.map((sf) => (
+            <div key={sf.id} className="fee-block">
+              <div className="fee-block-header">
+                <div>
+                  <div className="panel-row-title">{sf.feeStructure.name}</div>
+                  <div className="panel-row-meta">
+                    Total {formatCurrency(sf.feeStructure.totalAmount)} · Paid{" "}
+                    {formatCurrency(sf.paidAmount)} · Remaining{" "}
+                    {formatCurrency(sf.remainingAmount)}
+                  </div>
+                </div>
+                <span className={`status-pill ${STATUS_TONE[sf.status] ?? "neutral"}`}>
+                  {sf.status.replace("_", " ")}
+                </span>
+              </div>
+
+              {sf.payments.length > 0 && (
+                <div className="fee-payment-list">
+                  {sf.payments.map((p) => (
+                    <div className="fee-payment-row" key={p.id}>
+                      <span>
+                        {formatCurrency(p.amount)} · {p.paymentMethod} ·{" "}
+                        {formatDate(p.paidAt)}
+                      </span>
+                      <form action={deletePaymentAction}>
+                        <input type="hidden" name="studentId" value={student.id} />
+                        <input type="hidden" name="paymentId" value={p.id} />
+                        <button type="submit" className="table-link-danger">
+                          Remove
+                        </button>
+                      </form>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {sf.remainingAmount > 0 && (
+                <form action={recordPaymentAction} className="fee-payment-form">
+                  <input type="hidden" name="studentId" value={student.id} />
+                  <input type="hidden" name="studentFeeId" value={sf.id} />
+                  <input
+                    type="number"
+                    name="amount"
+                    min="1"
+                    step="1"
+                    placeholder="Amount"
+                    className="field-input"
+                    required
+                  />
+                  <select name="paymentMethod" className="field-input">
+                    <option value="CASH">Cash</option>
+                    <option value="BANK_TRANSFER">Bank transfer</option>
+                    <option value="CHEQUE">Cheque</option>
+                    <option value="ONLINE">Online</option>
+                  </select>
+                  <button type="submit" className="btn-primary btn-small">
+                    Record payment
+                  </button>
+                </form>
+              )}
+
+              {sf.payments.length === 0 && (
+                <form
+                  action={deleteStudentFeeAction}
+                  style={{ marginTop: 10 }}
+                >
+                  <input type="hidden" name="studentId" value={student.id} />
+                  <input type="hidden" name="studentFeeId" value={sf.id} />
+                  <button type="submit" className="table-link-danger">
+                    Remove this fee assignment
+                  </button>
+                </form>
+              )}
+            </div>
+          ))
+        )}
+
+        {availableStructures.length > 0 && (
+          <form
+            action={assignFeeStructureAction}
+            className="fee-assign-form"
+          >
+            <input type="hidden" name="studentId" value={student.id} />
+            <select name="feeStructureId" className="field-input" required>
+              <option value="">Assign a fee structure...</option>
+              {availableStructures.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({formatCurrency(s.totalAmount)})
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="btn-primary btn-small">
+              Assign
+            </button>
+          </form>
+        )}
       </div>
 
       <div className="panel panel-danger" style={{ maxWidth: 640 }}>
