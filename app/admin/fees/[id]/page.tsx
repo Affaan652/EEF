@@ -17,14 +17,10 @@ export default async function EditFeeStructurePage({
 }: {
   params: { id: string };
 }) {
-  const [structure, academicYears, departments] = await Promise.all([
+  const [structure, departments] = await Promise.all([
     prisma.feeStructure.findUnique({
       where: { id: params.id },
       include: { _count: { select: { studentFees: true } } },
-    }),
-    prisma.academicYear.findMany({
-      select: { id: true, label: true },
-      orderBy: { startDate: "desc" },
     }),
     prisma.department.findMany({
       where: { isActive: true },
@@ -48,23 +44,24 @@ export default async function EditFeeStructurePage({
       <div className="panel" style={{ maxWidth: 640 }}>
         <h2 className="panel-title">Edit fee structure</h2>
         <FeeStructureForm
-          academicYears={academicYears}
           departments={departments}
           action={updateFeeStructureAction}
           mode="edit"
           defaults={{
             id: structure.id,
             name: structure.name,
-            academicYearId: structure.academicYearId,
             departmentId: structure.departmentId,
+            programYear: structure.programYear,
             dueDate: toDateInputValue(structure.dueDate),
             isActive: structure.isActive,
-            tuitionFee: structure.tuitionFee,
             admissionFee: structure.admissionFee,
-            examFee: structure.examFee,
-            libraryFee: structure.libraryFee,
+            tuitionFee: structure.tuitionFee,
+            boardRegistrationFee: structure.boardRegistrationFee,
+            collegeCardFee: structure.collegeCardFee,
+            migrationFee: structure.migrationFee,
             sportsFee: structure.sportsFee,
-            otherFee: structure.otherFee,
+            studyTourFee: structure.studyTourFee,
+            miscellaneousFee: structure.miscellaneousFee,
           }}
         />
       </div>

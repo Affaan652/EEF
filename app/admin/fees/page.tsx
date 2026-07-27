@@ -111,7 +111,7 @@ export default async function FeesPage({
           <thead>
             <tr>
               <th>Structure</th>
-              <th>Academic year</th>
+              <th>Year</th>
               <th>Total amount</th>
               <th>Due date</th>
               <th>Students assigned</th>
@@ -130,7 +130,17 @@ export default async function FeesPage({
               structures.map((f: (typeof structures)[number]) => (
                 <tr key={f.id}>
                   <td>{f.name}</td>
-                  <td className="meta">{f.academicYear.label}</td>
+                  <td className="meta">
+                    {f.programYear
+                      ? `${f.programYear}${
+                          f.programYear === 1
+                            ? "st"
+                            : f.programYear === 2
+                            ? "nd"
+                            : "rd"
+                        } Year`
+                      : "-"}
+                  </td>
                   <td>{formatCurrency(f.totalAmount)}</td>
                   <td className="meta">
                     {new Date(f.dueDate).toLocaleDateString("en-GB", {

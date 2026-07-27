@@ -3,22 +3,23 @@
 import { useFormState, useFormStatus } from "react-dom";
 import type { ActionState } from "@/lib/actions/fee-admin";
 
-type AcademicYear = { id: string; label: string };
 type Department = { id: string; name: string };
 
 type FeeStructureDefaults = {
   id?: string;
   name?: string;
-  academicYearId?: string;
   departmentId?: string | null;
+  programYear?: number | null;
   dueDate?: string;
   isActive?: boolean;
-  tuitionFee?: number;
   admissionFee?: number;
-  examFee?: number;
-  libraryFee?: number;
+  tuitionFee?: number;
+  boardRegistrationFee?: number;
+  collegeCardFee?: number;
+  migrationFee?: number;
   sportsFee?: number;
-  otherFee?: number;
+  studyTourFee?: number;
+  miscellaneousFee?: number;
 };
 
 function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: string }) {
@@ -33,13 +34,11 @@ function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: st
 const initialState: ActionState = {};
 
 export function FeeStructureForm({
-  academicYears,
   departments,
   action,
   defaults,
   mode,
 }: {
-  academicYears: AcademicYear[];
   departments: Department[];
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
   defaults?: FeeStructureDefaults;
@@ -63,28 +62,25 @@ export function FeeStructureForm({
         name="name"
         required
         className="field-input"
-        placeholder="e.g. Semester 1 — DIT"
+        placeholder="e.g. First Year (Regular)"
         defaultValue={defaults?.name}
       />
 
       <div className="form-grid">
         <div>
-          <label className="field-label" htmlFor="academicYearId">
-            Academic year
+          <label className="field-label" htmlFor="programYear">
+            Year
           </label>
           <select
-            id="academicYearId"
-            name="academicYearId"
-            required
+            id="programYear"
+            name="programYear"
             className="field-input"
-            defaultValue={defaults?.academicYearId ?? ""}
+            defaultValue={defaults?.programYear ?? ""}
           >
-            <option value="">Select</option>
-            {academicYears.map((y) => (
-              <option key={y.id} value={y.id}>
-                {y.label}
-              </option>
-            ))}
+            <option value="">Not year-specific</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
           </select>
         </div>
         <div>
@@ -120,27 +116,14 @@ export function FeeStructureForm({
       />
 
       <p className="field-hint" style={{ marginTop: 18 }}>
-        Fee components (PKR) — the total is calculated automatically.
+        Fee components (PKR) — matches the approved fee structure. The total
+        is calculated automatically.
       </p>
 
       <div className="form-grid">
         <div>
-          <label className="field-label" htmlFor="tuitionFee">
-            Tuition fee
-          </label>
-          <input
-            id="tuitionFee"
-            name="tuitionFee"
-            type="number"
-            min="0"
-            step="1"
-            className="field-input"
-            defaultValue={defaults?.tuitionFee ?? 0}
-          />
-        </div>
-        <div>
           <label className="field-label" htmlFor="admissionFee">
-            Admission fee
+            Admission fee (yearly)
           </label>
           <input
             id="admissionFee"
@@ -152,40 +135,68 @@ export function FeeStructureForm({
             defaultValue={defaults?.admissionFee ?? 0}
           />
         </div>
-      </div>
-
-      <div className="form-grid">
         <div>
-          <label className="field-label" htmlFor="examFee">
-            Exam fee
+          <label className="field-label" htmlFor="tuitionFee">
+            Tuition fee (yearly)
           </label>
           <input
-            id="examFee"
-            name="examFee"
+            id="tuitionFee"
+            name="tuitionFee"
             type="number"
             min="0"
             step="1"
             className="field-input"
-            defaultValue={defaults?.examFee ?? 0}
-          />
-        </div>
-        <div>
-          <label className="field-label" htmlFor="libraryFee">
-            Library fee
-          </label>
-          <input
-            id="libraryFee"
-            name="libraryFee"
-            type="number"
-            min="0"
-            step="1"
-            className="field-input"
-            defaultValue={defaults?.libraryFee ?? 0}
+            defaultValue={defaults?.tuitionFee ?? 0}
           />
         </div>
       </div>
 
       <div className="form-grid">
+        <div>
+          <label className="field-label" htmlFor="boardRegistrationFee">
+            Board registration fee (yearly)
+          </label>
+          <input
+            id="boardRegistrationFee"
+            name="boardRegistrationFee"
+            type="number"
+            min="0"
+            step="1"
+            className="field-input"
+            defaultValue={defaults?.boardRegistrationFee ?? 0}
+          />
+        </div>
+        <div>
+          <label className="field-label" htmlFor="collegeCardFee">
+            College card fee (once)
+          </label>
+          <input
+            id="collegeCardFee"
+            name="collegeCardFee"
+            type="number"
+            min="0"
+            step="1"
+            className="field-input"
+            defaultValue={defaults?.collegeCardFee ?? 0}
+          />
+        </div>
+      </div>
+
+      <div className="form-grid">
+        <div>
+          <label className="field-label" htmlFor="migrationFee">
+            Migration fee (once)
+          </label>
+          <input
+            id="migrationFee"
+            name="migrationFee"
+            type="number"
+            min="0"
+            step="1"
+            className="field-input"
+            defaultValue={defaults?.migrationFee ?? 0}
+          />
+        </div>
         <div>
           <label className="field-label" htmlFor="sportsFee">
             Sports fee
@@ -200,18 +211,35 @@ export function FeeStructureForm({
             defaultValue={defaults?.sportsFee ?? 0}
           />
         </div>
+      </div>
+
+      <div className="form-grid">
         <div>
-          <label className="field-label" htmlFor="otherFee">
-            Other fee
+          <label className="field-label" htmlFor="studyTourFee">
+            Study tour
           </label>
           <input
-            id="otherFee"
-            name="otherFee"
+            id="studyTourFee"
+            name="studyTourFee"
             type="number"
             min="0"
             step="1"
             className="field-input"
-            defaultValue={defaults?.otherFee ?? 0}
+            defaultValue={defaults?.studyTourFee ?? 0}
+          />
+        </div>
+        <div>
+          <label className="field-label" htmlFor="miscellaneousFee">
+            Miscellaneous (yearly)
+          </label>
+          <input
+            id="miscellaneousFee"
+            name="miscellaneousFee"
+            type="number"
+            min="0"
+            step="1"
+            className="field-input"
+            defaultValue={defaults?.miscellaneousFee ?? 0}
           />
         </div>
       </div>

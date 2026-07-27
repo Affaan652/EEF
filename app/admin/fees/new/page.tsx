@@ -5,17 +5,11 @@ import { FeeStructureForm } from "@/app/admin/_components/fee-form";
 export const dynamic = "force-dynamic";
 
 export default async function NewFeeStructurePage() {
-  const [academicYears, departments] = await Promise.all([
-    prisma.academicYear.findMany({
-      select: { id: true, label: true },
-      orderBy: { startDate: "desc" },
-    }),
-    prisma.department.findMany({
-      where: { isActive: true },
-      select: { id: true, name: true },
-      orderBy: { name: "asc" },
-    }),
-  ]);
+  const departments = await prisma.department.findMany({
+    where: { isActive: true },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
 
   return (
     <>
@@ -27,7 +21,6 @@ export default async function NewFeeStructurePage() {
 
       <div className="panel" style={{ maxWidth: 640 }}>
         <FeeStructureForm
-          academicYears={academicYears}
           departments={departments}
           action={createFeeStructureAction}
           mode="create"

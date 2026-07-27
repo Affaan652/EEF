@@ -406,12 +406,21 @@ model FeeStructure {
   name           String
   academicYearId String
   departmentId   String?
-  tuitionFee     Float    @default(0)
-  admissionFee   Float    @default(0)
-  examFee        Float    @default(0)
-  libraryFee     Float    @default(0)
-  sportsFee      Float    @default(0)
-  otherFee       Float    @default(0)
+  // Which year of the program this applies to (1, 2, or 3) - shown in
+  // the admin form as "1st/2nd/3rd Year" rather than a calendar year.
+  programYear    Int?
+
+  // Fee categories matching the officially approved fee structure
+  // document (admission fee, tuition, board registration, etc.)
+  admissionFee         Float @default(0)
+  tuitionFee           Float @default(0)
+  boardRegistrationFee Float @default(0)
+  collegeCardFee       Float @default(0)
+  migrationFee         Float @default(0)
+  sportsFee            Float @default(0)
+  studyTourFee         Float @default(0)
+  miscellaneousFee     Float @default(0)
+
   totalAmount    Float
   dueDate        DateTime
   isActive       Boolean  @default(true)
